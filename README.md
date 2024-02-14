@@ -13,6 +13,7 @@ foss.crave.io account
 - Create a Repository Secret called CRAVE_TOKEN, with authentication token from crave.conf
 - Go to Settings -> Code and Automation -> Actions -> General
 - Set workflow Permissions to "Read and Write Permissions" and save.
+- Edit .github/workflows/main.yml to change build hostname, build username, git username and git email to your liking
 
 ## Inputs Explanation
 ### Base Project
