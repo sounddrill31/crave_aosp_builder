@@ -41,3 +41,6 @@ foss.crave.io account
 - eng:  Development configuration with faster build time; most suited for day-to-day development
 ### Clean Build
   - Uses fresh Base Project sources without any of our changes(use only for testing/debugging)
+
+## Known Issues
+  - Cancelling Builds on github actions does not cancel the crave runner. Best to go to foss.crave.io and cancel there, which causes your github actions build to fail
