@@ -44,3 +44,6 @@ foss.crave.io account
 
 ## Known Issues
   - Cancelling Builds on github actions does not cancel the crave runner. Best to go to foss.crave.io and cancel there, which causes your github actions build to fail
+## Project Explanation
+  For scheduled builds, it's better to remove the workflow dispatch stuff.
+  This Repo is a spiritual successor to azwhikaru's Action-TWRP-Builder
