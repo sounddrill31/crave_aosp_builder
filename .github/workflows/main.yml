@@ -76,8 +76,6 @@ jobs:
         sudo ln -sf ~/bin/repo /usr/bin/repo
     - name: Initialize repo
       run: |
-        export BUILD_HOSTNAME=crave
-        export BUILD_USERNAME=sounddrill31
         git config --global user.name "sounddrill31"
         git config --global user.email "sounddrill31@gmail.com"
          if [ "${{ github.event.inputs.BASE_PROJECT }}" == "arrow-13" ]; then
@@ -117,6 +115,8 @@ jobs:
         # Sync the repositories
         repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \ 
         # Set up build environment
+        export BUILD_HOSTNAME=crave ; \
+        export BUILD_USERNAME=sounddrill31 ; \
         source build/envsetup.sh && \
         # Lunch configuration
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
