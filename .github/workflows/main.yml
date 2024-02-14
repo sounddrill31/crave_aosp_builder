@@ -96,7 +96,7 @@ jobs:
     - name: Set Up Crave
       run: |
         rm -rf crave.conf crave
-        wget https://raw.githubusercontent.com/sounddrill31/android_build_CI/main/crave.conf
+        wget https://raw.githubusercontent.com/sounddrill31/crave_aosp_builder/main/crave.conf
         curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
         sed -i "s/CRAVEUSERNAME/${CRAVE_USERNAME}/g" crave.conf
         sed -i "s/CRAVETOKEN/${CRAVE_TOKEN}/g" crave.conf
