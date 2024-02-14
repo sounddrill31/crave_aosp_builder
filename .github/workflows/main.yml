@@ -115,7 +115,7 @@ jobs:
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
         # Sync the repositories
-        repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags && \ 
+        repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \ 
         # Set up build environment
         source build/envsetup.sh && \
         # Lunch configuration
