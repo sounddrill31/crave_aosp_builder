@@ -1,0 +1,146 @@
+name: Build ROMs Using Crave
+
+on:
+  workflow_dispatch:
+    inputs:
+      BASE_PROJECT:
+        description: 'Select Base Project'
+        required: true
+        default: 'lineage-20'
+        type: choice
+        options:
+          - 'lineage-20'
+          - 'crdroid-10'
+          - 'arrow-13'
+          - 'derp-13'
+      BUILD_DIFFERENT_ROM:
+        description: 'Enter Repo Init Command'
+        required: false
+      REMOVALS:
+        description: 'Folders to Remove Before Syncing'
+        default: '.repo/local_manifests'
+      LOCAL_MANIFEST:
+        description: 'Local Manifest URL'
+        required: true
+        default: 'https://github.com/sounddrill31/local_manifests'
+      LOCAL_MANIFEST_BRANCH:
+        description: 'Local Manifest Branch'
+        required: true
+        default: 'lineage-oxygen'
+      DEVICE_NAME:
+        description: 'DEVICE_NAME'
+        required: true
+        default: 'oxygen'
+      MAKEFILE_NAME:
+        description: 'MAKEFILE_NAME'
+        required: true
+        default: 'lineage_oxygen'
+      BUILD_COMMAND:
+        description: 'BUILD_COMMAND'
+        required: true
+        default: 'mka bacon'
+      BUILD_TYPE:
+        description: 'Build Type'
+        required: true
+        default: 'userdebug'
+        type: choice
+        options: 
+        - 'eng'
+        - 'userdebug'
+        - 'user' 
+      CLEAN_BUILD:
+        description: 'Build Clean?'
+        default: 'false'
+jobs:
+  test:
+    name: Build using foss.crave.io
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Cleanup
+      uses: rokibhasansagar/slimhub_actions@main
+    - name: Create workspace
+      run: mkdir ${{ github.event.inputs.DEVICE_NAME }}
+      continue-on-error: true
+    - name: Enter Workspace
+      run: cd ${{ github.event.inputs.DEVICE_NAME }}
+      continue-on-error: true
+    - name: Install gh command
+      run: curl -sS https://webi.sh/gh | sh
+    - name: Install repo
+      run: |
+        mkdir ~/bin
+        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+        chmod a+x ~/bin/repo
+        sudo ln -sf ~/bin/repo /usr/bin/repo
+    - name: Initialize repo
+      run: |
+        export BUILD_HOSTNAME=crave
+        export BUILD_USERNAME=sounddrill31
+        git config --global user.name "sounddrill31"
+        git config --global user.email "sounddrill31@gmail.com"
+         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "arrow-13" ]; then
+                  repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1
+         fi         
+         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "derp-13" ]; then  
+                  repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13
+         fi         
+         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "crdroid-10" ]; then  
+                  repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs
+         fi
+         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "lineage-20" ]; then  
+                  repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs
+         fi
+      id: pwd
+    - name: Set Up Crave
+      run: |
+        rm -rf crave.conf crave
+        wget https://raw.githubusercontent.com/sounddrill31/android_build_CI/main/crave.conf
+        curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
+        sed -i "s/CRAVEUSERNAME/${CRAVE_USERNAME}/g" crave.conf
+        sed -i "s/CRAVETOKEN/${CRAVE_TOKEN}/g" crave.conf
+      env: 
+        CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
+        CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
+    - name: Crave Run
+      run: |
+        if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "true" ]; then 
+           export CLEAN="--clean"
+          else
+            export CLEAN=""
+          fi
+        ./crave run $CLEAN --no-patch -- "rm -rf ${{ github.event.inputs.REMOVALS }} && \
+        # Clone local_manifests repository
+        ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
+        git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
+        # Sync the repositories
+        repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags && \ 
+        # Set up build environment
+        source build/envsetup.sh && \
+        # Lunch configuration
+        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
+        # Build the ROM
+        make clean && \
+        ${{ github.event.inputs.BUILD_COMMAND }}"
+    - name: Pull Compiled files
+      run: |
+        rm -rf oxygen/
+        crave pull out/target/product/*/*.zip
+        crave pull out/target/product/*/*.img 
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: | 
+          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
+          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+          ${{ github.event.inputs.DEVICE_NAME }}/vendor.img
+          ${{ github.event.inputs.DEVICE_NAME }}/system.img
+          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
+        name: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.run_id }}
+        tag_name: ${{ github.run_id }}
+        body: |
+          Target: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
