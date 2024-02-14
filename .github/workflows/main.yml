@@ -60,7 +60,7 @@ jobs:
 
     steps:
     - name: Cleanup
-      uses: rokibhasansagar/slimhub_actions@main
+      run: rm -rf *
     - name: Create workspace
       run: mkdir ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
