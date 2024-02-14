@@ -127,8 +127,8 @@ jobs:
     - name: Pull Compiled files
       run: |
         rm -rf oxygen/
-        crave pull out/target/product/*/*.zip
-        crave pull out/target/product/*/*.img 
+        ./crave pull out/target/product/*/*.zip
+        ./crave pull out/target/product/*/*.img 
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
