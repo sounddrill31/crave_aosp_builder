@@ -14,8 +14,9 @@ on:
           - 'arrow-13'
           - 'derp-13'
       BUILD_DIFFERENT_ROM:
-        description: 'Enter Repo Init Command'
+        description: 'Replace with Repo Init Command'
         required: false
+        default: 'echo "Build Starting!"'
       REMOVALS:
         description: 'Folders to Remove Before Syncing'
         default: '.repo/local_manifests'
