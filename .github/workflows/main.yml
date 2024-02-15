@@ -79,8 +79,8 @@ jobs:
         sudo ln -sf ~/bin/repo /usr/bin/repo
     - name: Initialize repo
       run: |
-        git config --global user.name "sounddrill31"
-        git config --global user.email "sounddrill31@gmail.com"
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
          if [ "${{ github.event.inputs.BASE_PROJECT }}" == "arrow-13" ]; then
                   repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1
          fi         
@@ -118,7 +118,7 @@ jobs:
         repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \ 
         # Set up build environment
         export BUILD_HOSTNAME=crave ; \
-        export BUILD_USERNAME=sounddrill31 ; \
+        export BUILD_USERNAME=${{ github.actor }} ; \
         source build/envsetup.sh && \
         # Lunch configuration
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
