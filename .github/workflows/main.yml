@@ -126,12 +126,12 @@ jobs:
     - name: Start compilation through 'crave'
       run: |
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
-           export CLEAN="--clean"
+           export CLEAN="clean"
           else
             export CLEAN=""
           fi
 
-        crave run $CLEAN --no-patch -- "rm -rf ${{ github.event.inputs.REMOVALS }} && \
+        crave run --no-patch --${CLEAN} "rm -rf ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
