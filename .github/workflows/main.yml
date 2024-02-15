@@ -78,10 +78,10 @@ jobs:
       run: curl -sS https://webi.sh/gh | sh
     - name: Install repo
       run: |
-        mkdir ~/bin
-        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-        chmod a+x ~/bin/repo
-        sudo ln -sf ~/bin/repo /usr/bin/repo
+        mkdir ${HOME}/bin
+        curl https://storage.googleapis.com/git-repo-downloads/repo > ${HOME}/bin/repo
+        chmod a+x ${HOME}/bin/repo
+        sudo ln -sf ${HOME}/bin/repo /usr/bin/repo
     - name: Set-up 'git' credential(s)
       run: |
         git config --global user.name "${{ github.actor }}"
