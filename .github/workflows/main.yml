@@ -79,9 +79,9 @@ jobs:
     - name: Install repo
       run: |
         mkdir ${HOME}/bin
-        curl https://storage.googleapis.com/git-repo-downloads/repo > ${HOME}/bin/repo
+        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
         chmod a+x ${HOME}/bin/repo
-        sudo ln -sf ${HOME}/bin/repo /usr/bin/repo
+        sudo ln -sf $[HOME}/bin/repo /usr/bin/repo
     - name: Set-up 'git' credential(s)
       run: |
         git config --global user.name "${{ github.actor }}"
@@ -105,8 +105,10 @@ jobs:
       id: pwd
     - name: Set Up Crave
       run: |
-        rm -rf crave
         curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
+        mv ${PWD}/crave ${HOME}/bin/
+        sudo ln -sf ~/bin/crave /usr/bin/crave
+
         envsubst < crave.conf.sample >> crave.conf
         rm -rf crave.conf.sample
       env:
@@ -119,7 +121,7 @@ jobs:
           else
             export CLEAN=""
           fi
-        ./crave run $CLEAN --no-patch -- "rm -rf ${{ github.event.inputs.REMOVALS }} && \
+        crave run $CLEAN --no-patch -- "rm -rf ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
@@ -136,11 +138,11 @@ jobs:
         ${{ github.event.inputs.BUILD_COMMAND }}"
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
-      run: ./crave stop --all
+      run: crave stop --all
     - name: Pull Compiled files
       run: |
-        ./crave pull out/target/product/*/*.zip
-        ./crave pull out/target/product/*/*.img 
+        crave pull out/target/product/*/*.zip
+        crave pull out/target/product/*/*.img 
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
