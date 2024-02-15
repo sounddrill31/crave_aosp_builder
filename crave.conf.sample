@@ -1,8 +1,8 @@
 {
-  "username": "CRAVEUSERNAME",
+  "username": "${CRAVE_USERNAME}",
   "headers": {
     "Content-Type": "application/json",
-    "Authorization": "CRAVETOKEN",
+    "Authorization": "${CRAVE_TOKEN}",
     "User-Agent": "Crave"
   },
   "projects": [],
