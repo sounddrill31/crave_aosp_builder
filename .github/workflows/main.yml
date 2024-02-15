@@ -127,9 +127,7 @@ jobs:
       run: |
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="clean"
-          else
-            export CLEAN=""
-          fi
+        fi
 
         crave run --no-patch --${CLEAN} "rm -rf ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
