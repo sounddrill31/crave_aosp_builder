@@ -4,53 +4,49 @@ on:
   workflow_dispatch:
     inputs:
       BASE_PROJECT:
-        description: 'Select Base Project'
+        description: "Select base project:"
         required: true
-        default: 'lineage-20'
+        default: "lineage-20"
         type: choice
         options:
-          - 'lineage-20'
-          - 'crdroid-10'
-          - 'arrow-13'
-          - 'derp-13'
+          - "lineage-20"
+          - "crdroid-10"
+          - "arrow-13"
+          - "derp-13"
       BUILD_DIFFERENT_ROM:
-        description: 'Replace with Repo Init Command'
+        description: "Replace with Repo Init Command"
         required: false
         default: 'echo "Build Starting!"'
       REMOVALS:
-        description: 'Folders to Remove Before Syncing'
-        default: '.repo/local_manifests'
+        description: "Folders to Remove Before Syncing"
+        default: ".repo/local_manifests"
       LOCAL_MANIFEST:
-        description: 'Local Manifest URL'
+        description: "Personal local manifest(s):"
         required: true
         default: 'https://github.com/sounddrill31/local_manifests'
       LOCAL_MANIFEST_BRANCH:
-        description: 'Local Manifest Branch'
+        description: "Personal local manifest(s) branch:"
         required: true
-        default: 'lineage-oxygen'
+        default: "lineage-oxygen"
       DEVICE_NAME:
-        description: 'DEVICE_NAME'
+        description: "Device's codename:"
         required: true
-        default: 'oxygen'
-      MAKEFILE_NAME:
-        description: 'MAKEFILE_NAME'
-        required: true
-        default: 'lineage_oxygen'
+        default: "oxygen"
       BUILD_COMMAND:
-        description: 'BUILD_COMMAND'
+        description: "BUILD_COMMAND"
         required: true
-        default: 'mka bacon'
+        default: "mka bacon"
       BUILD_TYPE:
-        description: 'Build Type'
+        description: "Select build type:"
         required: true
-        default: 'userdebug'
+        default: "userdebug"
         type: choice
-        options: 
-        - 'eng'
-        - 'userdebug'
-        - 'user' 
+        options:
+        - "eng"
+        - "userdebug"
+        - "user"
       CLEAN_BUILD:
-        description: 'Build Clean?'
+        description: 'Select wheter to build clean or not:'
         default: 'false'
 jobs:
   test:
