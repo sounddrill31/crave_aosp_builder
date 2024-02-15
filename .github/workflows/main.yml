@@ -124,6 +124,9 @@ jobs:
         # Build the ROM
         make clean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
+    - name: Execute if the job failed
+      if: ${{ cancelled() }}
+      run: ./crave stop --all
     - name: Pull Compiled files
       run: |
         rm -rf oxygen/
@@ -144,4 +147,4 @@ jobs:
         body: |
           Target: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
