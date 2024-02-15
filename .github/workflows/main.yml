@@ -69,11 +69,10 @@ jobs:
       run: rm -rf *
     - name: Check-out to repository
       uses: actions/checkout@v4
-    - name: Create workspace
-      run: mkdir ${{ github.event.inputs.DEVICE_NAME }}
-      continue-on-error: true
-    - name: Enter Workspace
-      run: cd ${{ github.event.inputs.DEVICE_NAME }}
+    - name: Set-up wokrspace environment
+      run: |
+        mkdir ${{ github.event.inputs.DEVICE_NAME }}
+        cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
     - name: Install gh command
       run: curl -sS https://webi.sh/gh | sh
@@ -83,7 +82,7 @@ jobs:
         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
         chmod a+x ~/bin/repo
         sudo ln -sf ~/bin/repo /usr/bin/repo
-    - name: Initialize repo
+    - name: Configure the 'repo' environment
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
