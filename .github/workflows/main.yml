@@ -48,6 +48,10 @@ on:
       CLEAN_BUILD:
         description: 'Select wheter to build clean or not:'
         default: 'false'
+        type: choice
+        options:
+        - "false"
+        - "true"
 jobs:
   test:
     name: Build using foss.crave.io
