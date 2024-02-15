@@ -63,11 +63,10 @@ jobs:
   test:
     name: Build using foss.crave.io
     runs-on: ubuntu-latest
-
     steps:
       # Clean the workflow before initialization.
     - name: Cleanup
-      run: rm -rf *
+      run: rm -rf ${PWD}/*
 
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -121,11 +120,11 @@ jobs:
     - name: Configure the 'crave' environment
       run: |
         curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
-        mv ${PWD}/crave ~/bin/
-        sudo ln -sf ~/bin/crave /usr/bin/crave
+        mv ${PWD}/crave ${HOME}/bin/
+        sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
 
-        envsubst < crave.conf.sample >> crave.conf
-        rm -rf crave.conf.sample
+        envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
+        rm -rf ${PWD}/crave.conf.sample
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
@@ -134,12 +133,10 @@ jobs:
     - name: Start compilation through 'crave'
       run: |
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
-           export CLEAN="--clean"
-          else
-            export CLEAN=""
-          fi
+           export CLEAN="clean"
+        fi
 
-        crave run $CLEAN --no-patch -- "rm -rf ${PWD}/.repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
+        crave run --no-patch --${CLEAN} "rm -rf ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
