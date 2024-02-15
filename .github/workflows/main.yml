@@ -63,23 +63,26 @@ jobs:
   test:
     name: Build using foss.crave.io
     runs-on: ubuntu-latest
-
     steps:
       # Clean the workflow before initialization.
     - name: Cleanup
       run: rm -rf ${PWD}/*
+
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
       uses: actions/checkout@v4
+
       # Set-up a spearate directory for the device.
     - name: Set-up wokrspace environment
       run: |
         mkdir ${{ github.event.inputs.DEVICE_NAME }}
         cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
+
       # [TO-DO] Drop this whenever we can.
     - name: Install gh command
       run: curl -sS https://webi.sh/gh | sh
+
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
       run: |
@@ -87,11 +90,13 @@ jobs:
         curl https://storage.googleapis.com/git-repo-downloads/repo >> "${HOME}/bin/repo"
         chmod a+x "${HOME}/bin/repo"
         sudo ln -sf "/home/${USER}/bin/repo" "/usr/bin/repo"
+
       # Generate 'git' credential in base of the workflow's author.
     - name: Set-up 'git' credential(s)
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
       # Initialize the previously choosen 'repo' project.
     - name: Configure the 'repo' environment
       run: |
@@ -110,6 +115,7 @@ jobs:
           ;;
         esac
       id: pwd
+
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
@@ -122,6 +128,7 @@ jobs:
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
+
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
       run: |
@@ -146,15 +153,18 @@ jobs:
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make clean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
+
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
       run: crave stop --all
+
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
+
       # Directly upload to releases.
     - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1
