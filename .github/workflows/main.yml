@@ -7,13 +7,13 @@ on:
       BASE_PROJECT:
         description: 'Choose a base project:'
         required: true
-        default: 'lineage-20'
+        default: 'LineageOS 20.0'
         type: choice
         options:
-          - 'lineage-20'
-          - 'crdroid-14'
-          - 'arrow-13'
-          - 'derp-13'
+          - 'LineageOS 20.0'
+          - 'crDroid 14.0'
+          - 'ArrowOS 13.1'
+          - 'DerpFest 13.0'
       BUILD_DIFFERENT_ROM:
         description: "Command to initialize a different 'repo' project:"
         required: false
@@ -97,16 +97,16 @@ jobs:
     - name: Configure the 'repo' environment
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
-          arrow-13)
+          "ArrowOS 13.1")
             repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
           ;;
-          derp-13)
+          "DerpFest 13.0")
             repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
           ;;
-          crdroid-14)
+          "crDroid 14.0")
             repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs --depth=1
           ;;
-          lineage-20)
+          "LineageOS 20.0")
             repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
           ;;
         esac
