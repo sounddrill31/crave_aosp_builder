@@ -79,14 +79,11 @@ jobs:
         git config --global user.email "sounddrill31@gmail.com"
          if [ "${{ github.event.inputs.BASE_PROJECT }}" == "arrow-13" ]; then
                   repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1
-         fi         
-         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "derp-13" ]; then  
+         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "derp-13" ]; then  
                   repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13
-         fi         
-         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "crdroid-10" ]; then  
+         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "crdroid-10" ]; then  
                   repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs
-         fi
-         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "lineage-20" ]; then  
+         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "lineage-20" ]; then  
                   repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs
          fi
       id: pwd
