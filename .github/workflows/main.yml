@@ -2,9 +2,10 @@ name: Build ROMs Using Crave
 
 on:
   workflow_dispatch:
+    # Various inputs to simplify usage of workflow.
     inputs:
       BASE_PROJECT:
-        description: 'Select Base Project'
+        description: 'Choose a base project:'
         required: true
         default: 'lineage-20'
         type: choice
@@ -14,34 +15,34 @@ on:
           - 'arrow-13'
           - 'derp-13'
       BUILD_DIFFERENT_ROM:
-        description: 'Replace with Repo Init Command'
+        description: "Command to initialize a different 'repo' project:"
         required: false
-        default: 'echo "Build Starting!"'
+        default: "echo 'Build Starting!'"
       REMOVALS:
-        description: 'Folders to Remove Before Syncing'
+        description: "Folders to be removed before syncing:"
         default: '.repo/local_manifests'
       LOCAL_MANIFEST:
-        description: 'Local Manifest URL'
+        description: "Personal local manifest's repository:"
         required: true
         default: 'https://github.com/sounddrill31/local_manifests'
       LOCAL_MANIFEST_BRANCH:
-        description: 'Local Manifest Branch'
+        description: "Personal local manifest's branch:"
         required: true
         default: 'lineage-oxygen'
       DEVICE_NAME:
-        description: 'DEVICE_NAME'
+        description: "Device's codename:"
         required: true
-        default: 'oxygen'
-      MAKEFILE_NAME:
-        description: 'MAKEFILE_NAME'
+        default: "oxygen"
+      PRODUCT_NAME:
+        description: "Product to build:"
         required: true
-        default: 'lineage_oxygen'
+        default: "lineage_oxygen"
       BUILD_COMMAND:
-        description: 'BUILD_COMMAND'
+        description: 'Command to be used for compiling:'
         required: true
         default: 'mka bacon'
       BUILD_TYPE:
-        description: 'Build Type'
+        description: 'Type of build:'
         required: true
         default: 'userdebug'
         type: choice
@@ -50,7 +51,7 @@ on:
         - 'userdebug'
         - 'user' 
       CLEAN_BUILD:
-        description: 'Build Clean?'
+        description: 'Build with a clean workspace?'
         required: true
         default: 'no'
         type: choice
@@ -61,31 +62,37 @@ on:
 jobs:
   test:
     name: Build using foss.crave.io
-
     runs-on: ubuntu-latest
 
     steps:
+      # Clean the workflow before initialization.
     - name: Cleanup
       run: rm -rf *
+      # Check-out in order to access the repository's files.
     - name: Check-out to repository
       uses: actions/checkout@v4
+      # Set-up a spearate directory for the device.
     - name: Set-up workspace environment
       run: |
         mkdir ${{ github.event.inputs.DEVICE_NAME }}
         cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
+      # [TO-DO] Drop this whenever we can.
     - name: Install gh command
       run: curl -sS https://webi.sh/gh | sh
-    - name: Install repo
+      # Download and configure 'repo'.
+    - name: Configure the 'repo' environment
       run: |
-        mkdir ${HOME}/bin
-        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-        chmod a+x ${HOME}/bin/repo
-        sudo ln -sf $[HOME}/bin/repo /usr/bin/repo
+        mkdir "${HOME}/bin"
+        curl https://storage.googleapis.com/git-repo-downloads/repo >> "${HOME}/bin/repo"
+        chmod a+x "${HOME}/bin/repo"
+        sudo ln -sf "/home/${USER}/bin/repo" "/usr/bin/repo"
+      # Generate 'git' credential in base of the workflow's author.
     - name: Set-up 'git' credential(s)
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      # Initialize the previously choosen 'repo' project.
     - name: Configure the 'repo' environment
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
@@ -103,10 +110,11 @@ jobs:
           ;;
         esac
       id: pwd
-    - name: Set Up Crave
+      # Download and configure 'crave'.
+    - name: Configure the 'crave' environment
       run: |
         curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
-        mv ${PWD}/crave ${HOME}/bin/
+        mv ${PWD}/crave ~/bin/
         sudo ln -sf ~/bin/crave /usr/bin/crave
 
         envsubst < crave.conf.sample >> crave.conf
@@ -114,48 +122,55 @@ jobs:
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
-    - name: Crave Run
+      # Create a 'crave' job for building.
+    - name: Start compilation through 'crave'
       run: |
-        if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then 
+        if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="--clean"
           else
             export CLEAN=""
           fi
+
         crave run $CLEAN --no-patch -- "rm -rf ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
+
         # Sync the repositories
-        repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \ 
+        repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
+
         # Set up build environment
-        export BUILD_HOSTNAME=crave ; \
         export BUILD_USERNAME=${{ github.actor }} ; \
+        export BUILD_HOSTNAME=crave ; \
         source build/envsetup.sh && \
-        # Lunch configuration
-        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
+
         # Build the ROM
+        lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make clean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
+      # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
       run: crave stop --all
-    - name: Pull Compiled files
+      # Pull '.zip's and '.img's from 'crave'.
+    - name: Retrive build artifact(s)
       run: |
         crave pull out/target/product/*/*.zip
-        crave pull out/target/product/*/*.img 
-    - name: Upload to Release
+        crave pull out/target/product/*/*.img
+      # Directly upload to releases.
+    - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1
       with:
-        files: | 
+        files: |
           ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           ${{ github.event.inputs.DEVICE_NAME }}/boot.img
           ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
           ${{ github.event.inputs.DEVICE_NAME }}/vendor.img
           ${{ github.event.inputs.DEVICE_NAME }}/system.img
           ${{ github.event.inputs.DEVICE_NAME }}/*.zip
-        name: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.run_id }}
+        name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
-          Target: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
+          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
