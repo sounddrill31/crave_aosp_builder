@@ -59,6 +59,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Cleanup
+      run: rm -rf *
     - name: Check-out to repository
       uses: actions/checkout@v4
     - name: Create workspace
