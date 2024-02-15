@@ -114,7 +114,7 @@ jobs:
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
         # Sync the repositories
-        repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \ 
+        repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync --no-interactive  && \ 
         # Set up build environment
         export BUILD_HOSTNAME=crave ; \
         export BUILD_USERNAME=sounddrill31 ; \
