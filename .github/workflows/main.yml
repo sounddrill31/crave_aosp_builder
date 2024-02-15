@@ -10,7 +10,7 @@ on:
         type: choice
         options:
           - 'lineage-20'
-          - 'crdroid-10'
+          - 'crdroid-14'
           - 'arrow-13'
           - 'derp-13'
       BUILD_DIFFERENT_ROM:
@@ -87,7 +87,7 @@ jobs:
          if [ "${{ github.event.inputs.BASE_PROJECT }}" == "derp-13" ]; then  
                   repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13
          fi         
-         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "crdroid-10" ]; then  
+         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "crdroid-14" ]; then  
                   repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs
          fi
          if [ "${{ github.event.inputs.BASE_PROJECT }}" == "lineage-20" ]; then  
