@@ -84,16 +84,16 @@ jobs:
 
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           arrow-13)
-            repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1
+            repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
           ;;
           derp-13)
-            repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13
+            repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
           ;;
           crdroid-14)
-            repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs
+            repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs --depth=1
           ;;
           lineage-20)
-            repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs
+            repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
           ;;
         esac
       id: pwd
