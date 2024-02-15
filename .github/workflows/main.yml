@@ -51,7 +51,13 @@ on:
         - 'user' 
       CLEAN_BUILD:
         description: 'Build Clean?'
-        default: 'false'
+        required: true
+        default: 'no'
+        type: choice
+        options: 
+        - 'yes'
+        - 'no'
+
 jobs:
   test:
     name: Build using foss.crave.io
@@ -108,7 +114,7 @@ jobs:
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
     - name: Crave Run
       run: |
-        if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "true" ]; then 
+        if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then 
            export CLEAN="--clean"
           else
             export CLEAN=""
