@@ -20,7 +20,7 @@ on:
         default: "echo 'Build Starting!'"
       REMOVALS:
         description: "Folders to be removed before syncing:"
-        default: '.repo/local_manifests'
+        required: false
       LOCAL_MANIFEST:
         description: "Personal local manifest [repository or raw]:"
         required: true
@@ -131,7 +131,7 @@ jobs:
             export CLEAN=""
           fi
 
-        crave run $CLEAN --no-patch -- "rm -rf ${{ github.event.inputs.REMOVALS }} && \
+        crave run $CLEAN --no-patch -- "rm -rf ${PWD}/.repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
