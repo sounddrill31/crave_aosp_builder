@@ -79,10 +79,6 @@ jobs:
         cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
 
-      # [TO-DO] Drop this whenever we can.
-    - name: Install gh command
-      run: curl -sS https://webi.sh/gh | sh
-
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
       run: |
