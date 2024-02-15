@@ -59,8 +59,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Cleanup
-      run: rm -rf *
+    - name: Check-out to repository
+      uses: actions/checkout@v4
     - name: Create workspace
       run: mkdir ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
@@ -94,12 +94,11 @@ jobs:
       id: pwd
     - name: Set Up Crave
       run: |
-        rm -rf crave.conf crave
-        wget https://raw.githubusercontent.com/sounddrill31/crave_aosp_builder/main/crave.conf
+        rm -rf crave
         curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
-        sed -i "s/CRAVEUSERNAME/${CRAVE_USERNAME}/g" crave.conf
-        sed -i "s/CRAVETOKEN/${CRAVE_TOKEN}/g" crave.conf
-      env: 
+        envsubst < crave.conf.sample >> crave.conf
+        rm -rf crave.conf.sample
+      env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
     - name: Crave Run
