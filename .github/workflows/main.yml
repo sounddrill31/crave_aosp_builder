@@ -82,11 +82,12 @@ jobs:
         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
         chmod a+x ~/bin/repo
         sudo ln -sf ~/bin/repo /usr/bin/repo
-    - name: Configure the 'repo' environment
+    - name: Set-up 'git' credential(s)
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-
+    - name: Configure the 'repo' environment
+      run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           arrow-13)
             repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
