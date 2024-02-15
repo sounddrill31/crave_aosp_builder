@@ -81,18 +81,21 @@ jobs:
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "arrow-13" ]; then
-                  repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1
-         fi         
-         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "derp-13" ]; then  
-                  repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13
-         fi         
-         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "crdroid-14" ]; then  
-                  repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs
-         fi
-         if [ "${{ github.event.inputs.BASE_PROJECT }}" == "lineage-20" ]; then  
-                  repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs
-         fi
+
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
+          arrow-13)
+            repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1
+          ;;
+          derp-13)
+            repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13
+          ;;
+          crdroid-14)
+            repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs
+          ;;
+          lineage-20)
+            repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs
+          ;;
+        esac
       id: pwd
     - name: Set Up Crave
       run: |
