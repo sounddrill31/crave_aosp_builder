@@ -1,5 +1,4 @@
-name: Build ROMs Using Crave
-
+name: Start job for building through Crave.
 on:
   workflow_dispatch:
     # Various inputs to simplify usage of workflow.
