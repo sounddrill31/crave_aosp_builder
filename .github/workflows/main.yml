@@ -83,11 +83,11 @@ jobs:
         git config --global user.email "sounddrill31@gmail.com"
          if [ "${{ github.event.inputs.BASE_PROJECT }}" == "arrow-13" ]; then
                   repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1
-         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "derp-13" ]; then  
+         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "derp-13" ]; then
                   repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13
-         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "crdroid-10" ]; then  
+         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "crdroid-10" ]; then
                   repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs
-         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "lineage-20" ]; then  
+         elif [ "${{ github.event.inputs.BASE_PROJECT }}" == "lineage-20" ]; then
                   repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs
          fi
       id: pwd
@@ -102,7 +102,7 @@ jobs:
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
     - name: Crave Run
       run: |
-        if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "true" ]; then 
+        if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "true" ]; then
            export CLEAN="--clean"
           else
             export CLEAN=""
@@ -112,7 +112,7 @@ jobs:
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
         # Sync the repositories
-        repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync --no-interactive  && \ 
+        repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync --no-interactive  && \
         # Set up build environment
         export BUILD_HOSTNAME=crave ; \
         export BUILD_USERNAME=sounddrill31 ; \
@@ -129,11 +129,11 @@ jobs:
       run: |
         rm -rf oxygen/
         ./crave pull out/target/product/*/*.zip
-        ./crave pull out/target/product/*/*.img 
+        ./crave pull out/target/product/*/*.img
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
-        files: | 
+        files:
           ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           ${{ github.event.inputs.DEVICE_NAME }}/boot.img
           ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
@@ -145,4 +145,4 @@ jobs:
         body: |
           Target: ${{ github.event.inputs.MAKEFILE_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
