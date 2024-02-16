@@ -44,6 +44,12 @@ foss.crave.io account
 
 ## Known Issues
   - You Tell Me :)
-## Project Explanation
+## Extra Info
   - For scheduled builds, it's better to remove the workflow dispatch stuff.
   - This Repo is a spiritual successor to azwhikaru's Action-TWRP-Builder
+## Credits!
+  - [AntoninoScordino](https://github.com/AntoninoScordino) for the recent rewrite
+  - [azwhikaru's Action-TWRP-Builder](https://github.com/azwhikaru/Action-TWRP-Builder) Which I used as reference
+  - [My Manifest tester](https://github.com/sounddrill31/Manifest_Tester) (credits to [AmogOS](https://github.com/AmogOS-Rom) project for original logic)
+  - [Other contributors](https://github.com/sounddrill31/crave_aosp_builder/graphs/contributors)
+  - [The crave team](https://github.com/accupara) for the build servers and helping us out when we get stuck
