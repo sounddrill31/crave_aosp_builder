@@ -92,6 +92,8 @@ jobs:
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
       run: |
              if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
@@ -117,6 +119,7 @@ jobs:
               timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
       timeout-minutes: 10
         # Initialize the previously choosen 'repo' project.
+
     - name: Configure the 'repo' environment
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
