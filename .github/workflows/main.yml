@@ -117,9 +117,9 @@ jobs:
               fi
               git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
               timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
-      timeout-minutes: 10
-        # Initialize the previously choosen 'repo' project.
-
+      timeout-minutes: 10  
+      
+      # Initialize the previously choosen 'repo' project.
     - name: Configure the 'repo' environment
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
