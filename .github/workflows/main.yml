@@ -88,7 +88,8 @@ jobs:
         curl https://storage.googleapis.com/git-repo-downloads/repo >> "${HOME}/bin/repo"
         chmod a+x "${HOME}/bin/repo"
         sudo ln -sf "/home/${USER}/bin/repo" "/usr/bin/repo"
-
+      continue-on-error: true
+      
       # Generate 'git' credential in base of the workflow's author.
     - name: Set-up 'git' credential(s)
       run: |
