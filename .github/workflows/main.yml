@@ -149,7 +149,8 @@ jobs:
 
         # Sync the repositories
         repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
-
+        rm -rf vendor/plros/prebuilt/apps/Cromite;
+        git clone https://gitlab.com/plros-lab/android_packages_apps_Cromite.git vendor/plros/prebuilt/apps/Cromite && \
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
         export BUILD_HOSTNAME=crave ; \
