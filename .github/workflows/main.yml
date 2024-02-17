@@ -37,10 +37,6 @@ on:
         description: "Device's codename:"
         required: true
         default: "oxygen"
-      PRODUCT_NAME:
-        description: "Product to build:"
-        required: true
-        default: "lineage_oxygen"
       BUILD_COMMAND:
         description: 'Command to be used for compiling:'
         required: true
@@ -129,6 +125,10 @@ jobs:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
 
+      # Export the product target.
+    - name: Setting build product target
+      run: | 
+
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
       run: |
@@ -153,6 +153,9 @@ jobs:
           curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
         fi \
 
+        # Set the build product target
+        PRODUCT_TARGET="$(find device/*/${{ github.event.inputs.DEVICE_NAME }})"
+
         # Sync the repositories
         repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
 
@@ -162,9 +165,11 @@ jobs:
         source build/envsetup.sh && \
 
         # Build the ROM
-        lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
+        lunch ${PRODUCT_TARGET}-${{ github.event.inputs.BUILD_TYPE }} && \
         make clean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
+      env:
+
 
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
@@ -190,7 +195,5 @@ jobs:
           ${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
-        body: |
-          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
