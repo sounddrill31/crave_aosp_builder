@@ -63,6 +63,8 @@ jobs:
   test:
     name: Build using foss.crave.io
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       # Clean the workflow before initialization.
     - name: Cleanup
