@@ -148,6 +148,9 @@ jobs:
         fi \
 
         # Sync the repositories
+        #here 
+        export REPO_NO_INTERACTIVE=1
+        export GIT_TERMINAL_PROMPT=0
         repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
         rm -rf vendor/plros/prebuilt/apps/Cromite;
         git clone https://gitlab.com/plros-lab/android_packages_apps_Cromite.git vendor/plros/prebuilt/apps/Cromite && \
