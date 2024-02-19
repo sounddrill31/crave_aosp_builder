@@ -99,25 +99,6 @@ jobs:
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
-      # Initialize the previously choosen 'repo' project.
-    - name: Configure the 'repo' environment
-      run: |
-        case "${{ github.event.inputs.BASE_PROJECT }}" in
-          "ArrowOS 13.1")
-            repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
-          ;;
-          "DerpFest 13.0")
-            repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
-          ;;
-          "crDroid 14.0")
-            repo init -u https://github.com/crdroidandroid/android.git -b 14.0 --git-lfs --depth=1
-          ;;
-          "LineageOS 20.0")
-            repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
-          ;;
-        esac
-      id: pwd
-
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
@@ -131,6 +112,25 @@ jobs:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
 
+      # Initialize the previously choosen 'repo' project.
+    - name: Set the 'crave' project
+      run: |
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
+          "ArrowOS 13.1")
+            crave set --projectID 73
+          ;;
+          "DerpFest 13.0")
+            crave set --projectID 64
+          ;;
+          "LineageOS 21.0")
+            crave set --projectID 72
+          ;;
+          "LineageOS 20.0")
+            crave set --projectID 36
+          ;;
+        esac
+      id: pwd
+        
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
       run: |
