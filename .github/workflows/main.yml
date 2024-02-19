@@ -17,7 +17,7 @@ on:
         type: choice
         options:
           - 'LineageOS 20.0'
-          - 'crDroid 14.0'
+          - 'LineageOS 21.0'
           - 'ArrowOS 13.1'
           - 'DerpFest 13.0'
       BUILD_DIFFERENT_ROM:
