@@ -181,11 +181,6 @@ jobs:
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
-        crave pull out/target/product/*/*.zip
-        crave pull out/target/product/*/*.img
-
-      # Directly upload to releases.
-    - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1
       with:
         files: |
