@@ -189,7 +189,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-        files: |
           ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           ${{ github.event.inputs.DEVICE_NAME }}/boot.img
           ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
