@@ -176,7 +176,7 @@ jobs:
            export CLEAN="clean"
         fi
 
-        crave run --no-patch --${CLEAN} "rm -rf ${PWD}/.repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
+        crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
