@@ -97,9 +97,10 @@ jobs:
 
     - name: Run crave devspace
       run: |
-        crave devspace -- "if tmux has-session -t ghactions ; then 
+        crave devspace -- "if tmux has-session -t ghactions && tmux capture-pane -p -t ghactions | grep -q "Connected to Github"; then 
           echo "Runner is already Running" 
         else 
+          tmux kill-session -t ghactions;
           tmux new-session -d -s ghactions 
           tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
           echo "Runner Started"
