@@ -97,7 +97,7 @@ jobs:
 
     - name: Run crave devspace
       run: |
-        crave devspace -- "if tmux has-session -t ghactions   2>/dev/null; then 
+        crave devspace -- "if tmux has-session -t ghactions ; then 
           echo "Runner is already Running" 
         else 
           tmux new-session -d -s ghactions 
