@@ -101,7 +101,7 @@ jobs:
           echo "Runner is already Running" 
         else 
           tmux new-session -d -s ghactions 
-          tmux send-keys -t ghactions 'cd actions-runner; ./run.sh' Enter 
+          tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
           echo "Runner Started"
         fi "
   test:
