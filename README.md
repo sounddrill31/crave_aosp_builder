@@ -19,7 +19,7 @@ foss.crave.io account
 - Follow the above steps
 - On the top menu bar of the repository, click on Actions
 - Self-Hosted Runner -> New Runner
-![Self hosted runner github actions](image.png)
+![image](https://github.com/sounddrill31/crave_aosp_builder/assets/84176052/31cdc938-c421-498b-a61b-6b79992ce1ba)
 - Enter Devspace
     https://opendroid.pugzarecute.com/wiki/Crave_Devspace#How_to_Prepare_Environment
 - Follow the instructions given by github to set up your runner
