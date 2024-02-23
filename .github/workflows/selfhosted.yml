@@ -206,7 +206,6 @@ jobs:
             crave set --projectID 36
           ;;
         esac
-      id: pwd
         
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
