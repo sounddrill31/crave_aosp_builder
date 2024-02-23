@@ -97,7 +97,7 @@ jobs:
 
     - name: Run crave devspace
       run: |
-        crave devspace -- "if tmux has-session -t ghactions && tmux capture-pane -p -t ghactions | grep -q "Connected to Github"; then 
+        crave devspace -- "if tmux has-session -t ghactions; then 
           echo "Runner is already Running" 
         else 
           tmux kill-session -t ghactions;
@@ -206,7 +206,6 @@ jobs:
             crave set --projectID 36
           ;;
         esac
-      id: pwd
         
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
