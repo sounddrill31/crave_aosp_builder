@@ -188,6 +188,7 @@ jobs:
       # Initialize the previously choosen 'repo' project.
     - name: Set the 'crave' project
       run: |
+        jq '.projects = []' ~/crave.conf > tmp && mv tmp ~/crave.conf
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "ArrowOS 13.1")
             repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
