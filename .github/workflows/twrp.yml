@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Start job for building through Crave.
+name: Start job for building TWRP through Crave.
 on:
   workflow_dispatch:
     # Various inputs to simplify usage of workflow.
@@ -64,7 +64,7 @@ on:
 
 jobs:
   test:
-    name: Build using foss.crave.io
+    name: Build TWRP using foss.crave.io
       # Change this to self-hosted after setting up devspace as github actions runner
     runs-on: ubuntu-latest
     concurrency:
