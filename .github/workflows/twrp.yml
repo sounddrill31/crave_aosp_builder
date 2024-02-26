@@ -146,6 +146,7 @@ jobs:
         export BUILD_USERNAME=${{ github.actor }} ; \
         export BUILD_HOSTNAME=crave ; \
         source build/envsetup.sh && \
+        export ALLOW_MISSING_DEPENDENCIES=true; \
 
         # Build the ROM
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
