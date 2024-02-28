@@ -106,6 +106,7 @@ jobs:
           echo "Runner Started"
         fi "
   test:
+    timeout-minutes: 720      
     name: Build using foss.crave.io
     needs: run-devspace-and-tmux    
     runs-on: self-hosted
