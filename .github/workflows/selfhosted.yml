@@ -225,7 +225,9 @@ jobs:
         fi \
         
         # Sync the repositories
+        date
         repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
+        date
         
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
@@ -235,7 +237,9 @@ jobs:
         # Build the ROM
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
-        ${{ github.event.inputs.BUILD_COMMAND }}"
+        date
+        ${{ github.event.inputs.BUILD_COMMAND }}
+        date"
       timeout-minutes: 720  
       
       # Only reach this wheter the user killed the workflow.
