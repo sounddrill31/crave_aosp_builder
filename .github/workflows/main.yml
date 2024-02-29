@@ -100,8 +100,8 @@ jobs:
       # Generate 'git' credential in base of the workflow's author.
     - name: Set-up 'git' credential(s)
       run: |
-        git config --global user.name "${{ github.actor }}"
-        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+        git config --global user.name "szm"
+        git config --global user.email "szm@disroot.org"
 
       # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
@@ -189,7 +189,7 @@ jobs:
         repo sync -c -j\$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
         
         # Set up build environment
-        export BUILD_USERNAME=${{ github.actor }} ; \
+        export BUILD_USERNAME=szm ; \
         export BUILD_HOSTNAME=crave ; \
         source build/envsetup.sh && \
 
