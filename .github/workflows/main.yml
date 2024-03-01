@@ -23,11 +23,6 @@ on:
       SOURCE_MANIFEST:
         description: "Different AOSP source for 'repo' (manifest):"
         required: false
-        default:
-      SOURCE_BRANCH:
-        description: "Different source for 'repo' (rbranch):"
-        required: false
-        default:
       REMOVALS:
         description: "Folders to be removed before syncing:"
         required: false
@@ -102,45 +97,52 @@ jobs:
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-
+        if [ -z ${GITHUB_TOKEN} ]; then
+          echo machine github.com login ${GITHUB_TOKEN} password ${GITHUB_TOKEN} >> ${PWD}/.netrc
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
       run: |
-             if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
-              case "${{ github.event.inputs.BASE_PROJECT }}" in
-                  "ArrowOS 13.1")
-                    repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
-                  ;;
-                  "DerpFest 13.0")
-                    repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
-                  ;;
-                  "LineageOS 21.0")
-                    repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
-                  ;;
-                  "LineageOS 20.0")
-                    repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
-                  ;;
-              esac
-             else
-                      ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
-                      
-              fi
-              git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
-              timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
-              rm -rf .repo
+        if [ -z ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ]; then
+          case "${{ github.event.inputs.BASE_PROJECT }}" in
+              "ArrowOS 13.1")
+                repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
+              ;;
+              "DerpFest 13.0")
+                repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
+              ;;
+              "LineageOS 21.0")
+                repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
+              ;;
+              "LineageOS 20.0")
+                repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
+              ;;
+          esac
+        else
+          ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
+        fi
+
+        git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests
+        timeout 1m repo sync --force-sync
+        if [ $? == 124 ]; then
+          echo "Error: Process failed with exit code $exit_code"
+          exit 0
+        fi
       timeout-minutes: 10  
       
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
         if [ "${DCDEVSPACE}" == "1" ]; then
-        echo 'No need to set up crave, we are already running in devspace!'
+          echo 'No need to set up crave, we are already running in devspace!'
         else
           curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
           mv ${PWD}/crave ${HOME}/bin/
           sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
           envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
-          rm -rf ${PWD}/crave.conf.sample          
+          rm -rf ${PWD}/crave.conf.sample
         fi
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
@@ -151,19 +153,15 @@ jobs:
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "ArrowOS 13.1")
-            repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
             crave set --projectID 73
           ;;
           "DerpFest 13.0")
-            repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
             crave set --projectID 64
           ;;
           "LineageOS 21.0")
-            repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
             crave set --projectID 72
           ;;
           "LineageOS 20.0")
-            repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
             crave set --projectID 36
           ;;
         esac
@@ -176,6 +174,7 @@ jobs:
            export CLEAN="clean"
         fi
 
+        crave push ${PWD}/.netrc -d ${HOME}/.netrc
         crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
@@ -194,12 +193,12 @@ jobs:
         if [ ! $? == 0 ]; then \
           curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
         fi \
-        
+
         # Sync the repositories
-        repo sync -c -j\$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
-        
+        repo sync -c -j $(nproc) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
+
         # Set up build environment
-        export BUILD_USERNAME=${{ github.actor }} ; \
+        export BUILD_USERNAME=${{ github.actor }}; \
         export BUILD_HOSTNAME=crave ; \
         source build/envsetup.sh && \
 
