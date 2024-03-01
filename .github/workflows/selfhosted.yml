@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Start job for building through Crave.
+name: Start job for building through Crave(self-hosted)
 on:
   workflow_dispatch:
     # Various inputs to simplify usage of workflow.
@@ -20,14 +20,10 @@ on:
           - 'LineageOS 21.0'
           - 'ArrowOS 13.1'
           - 'DerpFest 13.0'
-      SOURCE_MANIFEST:
-        description: "Different AOSP source for 'repo' (manifest):"
+      BUILD_DIFFERENT_ROM:
+        description: "Command to initialize a different 'repo' project:"
         required: false
-        default:
-      SOURCE_BRANCH:
-        description: "Different source for 'repo' (rbranch):"
-        required: false
-        default:
+        default: "echo 'Build Starting!'"
       REMOVALS:
         description: "Folders to be removed before syncing:"
         required: false
@@ -43,6 +39,10 @@ on:
         description: "Device's codename:"
         required: true
         default: "oxygen"
+      PRODUCT_NAME:
+        description: "Product to build:"
+        required: true
+        default: "lineage_oxygen"
       BUILD_COMMAND:
         description: 'Command to be used for compiling:'
         required: true
@@ -66,10 +66,50 @@ on:
         - 'no'
 
 jobs:
-  test:
-    name: Build using foss.crave.io
-      # Change this to self-hosted after setting up devspace as github actions runner
+  run-devspace-and-tmux:
     runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tmux
+
+      # Download and configure 'crave'.
+    - name: Configure the 'crave' environment
+      run: |
+        if [ "${DCDEVSPACE}" == "1" ]; then
+        echo 'No need to set up crave, we are already running in devspace!'
+        else
+          mkdir ${HOME}/bin/
+          curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
+          mv ${PWD}/crave ${HOME}/bin/
+          sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
+          envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
+          rm -rf ${PWD}/crave.conf.sample          
+        fi
+      env:
+        CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
+        CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
+
+    - name: Run crave devspace
+      run: |
+        crave devspace -- "if tmux has-session -t ghactions; then 
+          echo "Runner is already Running" 
+        else 
+          tmux kill-session -t ghactions;
+          tmux new-session -d -s ghactions 
+          tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
+          echo "Runner Started"
+        fi "
+  test:
+    timeout-minutes: 720      
+    name: Build using foss.crave.io
+    needs: run-devspace-and-tmux    
+    runs-on: self-hosted
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
@@ -149,25 +189,21 @@ jobs:
       # Initialize the previously choosen 'repo' project.
     - name: Set the 'crave' project
       run: |
+        jq '.projects = []' ~/crave.conf > tmp && mv tmp ~/crave.conf
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "ArrowOS 13.1")
             repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
-            crave set --projectID 73
           ;;
           "DerpFest 13.0")
             repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
-            crave set --projectID 64
           ;;
           "LineageOS 21.0")
             repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
-            crave set --projectID 72
           ;;
           "LineageOS 20.0")
             repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
-            crave set --projectID 36
           ;;
         esac
-      id: pwd
         
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
@@ -181,16 +217,6 @@ jobs:
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
 
-        # Set-up 'repo' for different ROM manifest
-        if [ -z ${{ github.event.inputs.SOURCE_MANIFEST }} ]; then \
-          if [ -z ${{ github.event.inputs.SOURCE_BRANCH }} ]; then \
-            repo init -u ${{ github.event.inputs.SOURCE_MANIFEST --git-lfs --depth=1; \
-          else \
-            repo init -u ${{ github.event.inputs.SOURCE_MANIFEST -b ${{ github.event.inputs.SOURCE_BRANCH }} --git-lfs --depth=1
-        fi \
-
-        # Clone local_manifests repository
-        git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
         if [ ! $? == 0 ]; then \
           curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
         fi \
@@ -207,9 +233,8 @@ jobs:
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      env:
-
-
+      timeout-minutes: 720  
+      
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
@@ -234,5 +259,15 @@ jobs:
           ${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
+        body: |
+          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Upload to Telegram
+    - name: Upload Using telegram-upload
+      run: |
+        telegram-upload ${{ github.event.inputs.DEVICE_NAME }}/recovery.img ${{ github.event.inputs.DEVICE_NAME }}/boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor.img ${{ github.event.inputs.DEVICE_NAME }}/system.img ${{ github.event.inputs.DEVICE_NAME }}/*.zip
+      continue-on-error: true
+      

@@ -15,6 +15,16 @@ foss.crave.io account
 - Set workflow Permissions to "Read and Write Permissions" and save.
 - Edit .github/workflows/main.yml to change build hostname, build username, git username and git email to your liking
 
+## Extra Setup For Selfhosted runner:
+- Follow the above steps
+- On the top menu bar of the repository, click on Actions
+- Self-Hosted Runner -> New Runner
+![image](https://github.com/sounddrill31/crave_aosp_builder/assets/84176052/31cdc938-c421-498b-a61b-6b79992ce1ba)
+- Enter Devspace
+    https://opendroid.pugzarecute.com/wiki/Crave_Devspace#How_to_Prepare_Environment
+- Follow the instructions given by github to set up your runner
+- Do not run ./run.sh, instead, start your build through workflow dispatch
+
 ## Inputs Explanation
 ### Base Project
     - These are the projects everyone can build, with a foss.crave.io account
@@ -44,6 +54,12 @@ foss.crave.io account
 
 ## Known Issues
   - You Tell Me :)
-## Project Explanation
+## Extra Info
   - For scheduled builds, it's better to remove the workflow dispatch stuff.
   - This Repo is a spiritual successor to azwhikaru's Action-TWRP-Builder
+## Credits!
+  - [AntoninoScordino](https://github.com/AntoninoScordino) for the recent rewrite
+  - [azwhikaru's Action-TWRP-Builder](https://github.com/azwhikaru/Action-TWRP-Builder) Which I used as reference
+  - [My Manifest tester](https://github.com/sounddrill31/Manifest_Tester) (credits to [AmogOS](https://github.com/AmogOS-Rom) project for original logic)
+  - [Other contributors](https://github.com/sounddrill31/crave_aosp_builder/graphs/contributors)
+  - [The crave team](https://github.com/accupara) for the build servers and helping us out when we get stuck

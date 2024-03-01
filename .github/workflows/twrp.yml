@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Start job for building through Crave.
+name: Start job for building TWRP through Crave.
 on:
   workflow_dispatch:
     # Various inputs to simplify usage of workflow.
@@ -16,18 +16,11 @@ on:
         default: 'LineageOS 20.0'
         type: choice
         options:
-          - 'LineageOS 20.0'
-          - 'LineageOS 21.0'
-          - 'ArrowOS 13.1'
-          - 'DerpFest 13.0'
-      SOURCE_MANIFEST:
-        description: "Different AOSP source for 'repo' (manifest):"
+          - 'TWRP 12.1'
+      BUILD_DIFFERENT_ROM:
+        description: "Command to initialize a different 'repo' project:"
         required: false
-        default:
-      SOURCE_BRANCH:
-        description: "Different source for 'repo' (rbranch):"
-        required: false
-        default:
+        default: "echo 'Build Starting!'"
       REMOVALS:
         description: "Folders to be removed before syncing:"
         required: false
@@ -38,19 +31,23 @@ on:
       LOCAL_MANIFEST_BRANCH:
         description: "Personal local manifest's branch:"
         required: false
-        default: 'lineage-oxygen'
+        default: 'twrp-oxygen'
       DEVICE_NAME:
         description: "Device's codename:"
         required: true
         default: "oxygen"
+      PRODUCT_NAME:
+        description: "Product to build:"
+        required: true
+        default: "twrp_oxygen"
       BUILD_COMMAND:
         description: 'Command to be used for compiling:'
         required: true
-        default: 'mka bacon'
+        default: 'mka recoveryimage'
       BUILD_TYPE:
         description: 'Type of build:'
         required: true
-        default: 'userdebug'
+        default: 'eng'
         type: choice
         options: 
         - 'eng'
@@ -67,7 +64,7 @@ on:
 
 jobs:
   test:
-    name: Build using foss.crave.io
+    name: Build TWRP using foss.crave.io
       # Change this to self-hosted after setting up devspace as github actions runner
     runs-on: ubuntu-latest
     concurrency:
@@ -103,33 +100,6 @@ jobs:
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
-      # Test Your Personal 'Local Manifests' against The ROM
-    - name: Test Local Manifests
-      run: |
-             if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
-              case "${{ github.event.inputs.BASE_PROJECT }}" in
-                  "ArrowOS 13.1")
-                    repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
-                  ;;
-                  "DerpFest 13.0")
-                    repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
-                  ;;
-                  "LineageOS 21.0")
-                    repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
-                  ;;
-                  "LineageOS 20.0")
-                    repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
-                  ;;
-              esac
-             else
-                      ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
-                      
-              fi
-              git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
-              timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
-              rm -rf .repo
-      timeout-minutes: 10  
-      
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
@@ -149,24 +119,8 @@ jobs:
       # Initialize the previously choosen 'repo' project.
     - name: Set the 'crave' project
       run: |
-        case "${{ github.event.inputs.BASE_PROJECT }}" in
-          "ArrowOS 13.1")
-            repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
-            crave set --projectID 73
-          ;;
-          "DerpFest 13.0")
-            repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
-            crave set --projectID 64
-          ;;
-          "LineageOS 21.0")
-            repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
-            crave set --projectID 72
-          ;;
-          "LineageOS 20.0")
-            repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
-            crave set --projectID 36
-          ;;
-        esac
+            repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+            crave set --projectID 78
       id: pwd
         
       # Create a 'crave' job for building.
@@ -181,16 +135,6 @@ jobs:
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
 
-        # Set-up 'repo' for different ROM manifest
-        if [ -z ${{ github.event.inputs.SOURCE_MANIFEST }} ]; then \
-          if [ -z ${{ github.event.inputs.SOURCE_BRANCH }} ]; then \
-            repo init -u ${{ github.event.inputs.SOURCE_MANIFEST --git-lfs --depth=1; \
-          else \
-            repo init -u ${{ github.event.inputs.SOURCE_MANIFEST -b ${{ github.event.inputs.SOURCE_BRANCH }} --git-lfs --depth=1
-        fi \
-
-        # Clone local_manifests repository
-        git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
         if [ ! $? == 0 ]; then \
           curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
         fi \
@@ -202,13 +146,12 @@ jobs:
         export BUILD_USERNAME=${{ github.actor }} ; \
         export BUILD_HOSTNAME=crave ; \
         source build/envsetup.sh && \
+        export ALLOW_MISSING_DEPENDENCIES=true; \
 
         # Build the ROM
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      env:
-
 
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
@@ -218,7 +161,6 @@ jobs:
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
-        crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
 
       # Directly upload to releases.
@@ -229,10 +171,9 @@ jobs:
           ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           ${{ github.event.inputs.DEVICE_NAME }}/boot.img
           ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor.img
-          ${{ github.event.inputs.DEVICE_NAME }}/system.img
-          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
+        body: |
+          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
