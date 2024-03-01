@@ -189,10 +189,10 @@ jobs:
         fi \
 
         # Sync the repositories
-        repo sync -c -j\$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
+        repo sync -c -j $(nproc) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
 
         # Set up build environment
-        export BUILD_USERNAME=${{ github.actor }} ; \
+        export BUILD_USERNAME=${{ github.actor }}; \
         export BUILD_HOSTNAME=crave ; \
         source build/envsetup.sh && \
 
