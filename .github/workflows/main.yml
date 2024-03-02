@@ -157,16 +157,16 @@ jobs:
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "ArrowOS 13.1")
-            crave set --projectID 73
+            repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
           ;;
           "DerpFest 13.0")
-            crave set --projectID 64
+            repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
           ;;
           "LineageOS 21.0")
-            crave set --projectID 72
+            repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
           ;;
           "LineageOS 20.0")
-            crave set --projectID 36
+            repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
           ;;
         esac
       id: pwd
