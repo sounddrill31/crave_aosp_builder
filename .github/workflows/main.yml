@@ -130,7 +130,7 @@ jobs:
 
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests
         timeout 1m repo sync --force-sync
-        if [ $? == 124 ]; then
+        if [ $? != 124 ]; then
           echo "Error: Process failed with exit code $exit_code"
           exit 0
         fi
