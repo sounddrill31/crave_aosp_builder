@@ -248,19 +248,13 @@ jobs:
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
-      uses: softprops/action-gh-release@v1
+      uses: xresloader/upload-to-github-release@v1
       with:
-        files: |
-          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor.img
-          ${{ github.event.inputs.DEVICE_NAME }}/system.img
-          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
-        name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
-        tag_name: ${{ github.run_id }}
-        body: |
-          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
+          file: "${{ github.event.inputs.DEVICE_NAME }}/recovery.img;${{ github.event.inputs.DEVICE_NAME }}/boot.img;${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img;${{ github.event.inputs.DEVICE_NAME }}/vendor.img;${{ github.event.inputs.DEVICE_NAME }}/system.img;${{ github.event.inputs.DEVICE_NAME }}/*.zip"
+          verbose: true
+          #prerelease: true
+          default_release_name: "${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}"
+          default_release_body: "Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}"
       continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
