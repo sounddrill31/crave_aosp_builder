@@ -223,7 +223,7 @@ jobs:
         
         # Sync the repositories
         date
-        repo sync -c -j$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
+        repo sync -c -j\$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
         date
         
         # Set up build environment
