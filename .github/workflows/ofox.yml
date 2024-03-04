@@ -1,0 +1,191 @@
+#
+# Copyright (C) 2024 Antonino Scordino
+# Copyright (C) 2024 Souhrud Reddy
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+name: Start job for building OrangeFox through Crave.
+on:
+  workflow_dispatch:
+    # Various inputs to simplify usage of workflow.
+    inputs:
+      BASE_PROJECT:
+        description: 'Choose a base project:'
+        required: true
+        default: 'LineageOS 20.0'
+        type: choice
+        options:
+          - 'TWRP 12.1'
+      BUILD_DIFFERENT_ROM:
+        description: "orangefox_sync.sh command"
+        required: false
+        default: "./orangefox_sync.sh --branch 12.1 --path /tmp/src/android"
+      REMOVALS:
+        description: "Folders to be removed before syncing:"
+        required: false
+      LOCAL_MANIFEST:
+        description: "Personal local manifest [repository or raw]:"
+        required: true
+        default: 'https://github.com/sounddrill31/local_manifests'
+      LOCAL_MANIFEST_BRANCH:
+        description: "Personal local manifest's branch:"
+        required: false
+        default: 'twrp-oxygen'
+      DEVICE_NAME:
+        description: "Device's codename:"
+        required: true
+        default: "oxygen"
+      PRODUCT_NAME:
+        description: "Product to build:"
+        required: true
+        default: "twrp_oxygen"
+      BUILD_COMMAND:
+        description: 'Command to be used for compiling:'
+        required: true
+        default: 'mka adbd recoveryimage'
+      BUILD_TYPE:
+        description: 'Type of build:'
+        required: true
+        default: 'eng'
+        type: choice
+        options: 
+        - 'eng'
+        - 'userdebug'
+        - 'user' 
+      CLEAN_BUILD:
+        description: 'Build with a clean workspace?'
+        required: true
+        default: 'no'
+        type: choice
+        options: 
+        - 'yes'
+        - 'no'
+
+jobs:
+  test:
+    name: Build TWRP using foss.crave.io
+      # Change this to self-hosted after setting up devspace as github actions runner
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      # Clean the workflow before initialization.
+    - name: Cleanup
+      run: rm -rf ${PWD}/*
+
+      # Check-out in order to access the repository's files.
+    - name: Check-out to repository
+      uses: actions/checkout@v4
+
+      # Set-up a spearate directory for the device.
+    - name: Set-up workspace environment
+      run: |
+        mkdir ${{ github.event.inputs.DEVICE_NAME }}
+        cd ${{ github.event.inputs.DEVICE_NAME }}
+      continue-on-error: true
+
+      # Download and configure 'repo'.
+    - name: Configure the 'repo' environment
+      run: |
+        mkdir "${HOME}/bin"
+        curl https://storage.googleapis.com/git-repo-downloads/repo >> "${HOME}/bin/repo"
+        chmod a+x "${HOME}/bin/repo"
+        sudo ln -sf "/home/${USER}/bin/repo" "/usr/bin/repo"
+      continue-on-error: true
+      
+      # Generate 'git' credential in base of the workflow's author.
+    - name: Set-up 'git' credential(s)
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      # Download and configure 'crave'.
+    - name: Configure the 'crave' environment
+      run: |
+        if [ "${DCDEVSPACE}" == "1" ]; then
+        echo 'No need to set up crave, we are already running in devspace!'
+        else
+          curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
+          mv ${PWD}/crave ${HOME}/bin/
+          sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
+          envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
+          rm -rf ${PWD}/crave.conf.sample          
+        fi
+      env:
+        CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
+        CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
+
+      # Initialize the previously choosen 'repo' project.
+    - name: Set the 'crave' project
+      run: |
+            repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+      id: pwd
+        
+      # Create a 'crave' job for building.
+    - name: Start compilation through 'crave'
+      run: |
+        if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
+           export CLEAN="clean"
+        fi
+
+        crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ scripts ~/OrangeFox_sync ${{ github.event.inputs.REMOVALS }} && \
+        #Orangefox Specific Commands
+        sudo apt install git aria2 -y; \
+        git clone https://gitlab.com/OrangeFox/misc/scripts; \
+        cd scripts; \
+        sudo bash setup/android_build_env.sh; \
+        sudo bash setup/install_android_sdk.sh; \
+
+        #Sync OrangeFox
+        mkdir ~/OrangeFox_sync; \
+        cd ~/OrangeFox_sync; \
+        git clone https://gitlab.com/OrangeFox/sync.git # (or, using ssh, "git clone git@gitlab.com:OrangeFox/sync.git"); \
+        cd ~/OrangeFox_sync/sync/; \
+        ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
+
+        # Clone local_manifests repository
+        git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
+
+        if [ ! $? == 0 ]; then \
+          curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
+        fi \
+        
+        # Sync the repositories
+        repo sync -c -j\$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
+        
+        # Set up build environment
+        export BUILD_USERNAME=${{ github.actor }} ; \
+        export BUILD_HOSTNAME=crave ; \
+        source build/envsetup.sh && \
+        export ALLOW_MISSING_DEPENDENCIES=true; \
+
+        # Build the ROM
+        lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
+        make installclean && \
+        ${{ github.event.inputs.BUILD_COMMAND }}"
+
+      # Only reach this wheter the user killed the workflow.
+    - name: Execute if the job is cancelled
+      if: ${{ cancelled() }}
+      run: crave stop --all
+
+      # Pull '.zip's and '.img's from 'crave'.
+    - name: Retrive build artifact(s)
+      run: |
+        crave pull out/target/product/*/*.img
+
+      # Directly upload to releases.
+    - name: Upload to repository's releases page
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
+          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+        name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
+        tag_name: ${{ github.run_id }}
+        body: |
+          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
