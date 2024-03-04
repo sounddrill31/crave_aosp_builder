@@ -143,6 +143,7 @@ jobs:
         git clone https://gitlab.com/OrangeFox/sync.git # (or, using ssh, "git clone git@gitlab.com:OrangeFox/sync.git"); \
         cd ~/OrangeFox_sync/sync/; \
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
+        cd /tmp/src/android; \
 
         # Clone local_manifests repository
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
@@ -159,6 +160,8 @@ jobs:
         export BUILD_HOSTNAME=crave ; \
         source build/envsetup.sh && \
         export ALLOW_MISSING_DEPENDENCIES=true; \
+        export FOX_BUILD_DEVICE=${{ github.event.inputs.DEVICE_NAME }}; \
+        export LC_ALL="C"; \
 
         # Build the ROM
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
