@@ -249,7 +249,6 @@ jobs:
       # Directly upload to releases.
     - name: Upload to repository's releases page
       run: |
-        gh auth login
         gh release create "${{ github.run_id }}" ""${{ github.event.inputs.DEVICE_NAME }}/recovery.img;${{ github.event.inputs.DEVICE_NAME }}/boot.img;${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img;${{ github.event.inputs.DEVICE_NAME }}/vendor.img;${{ github.event.inputs.DEVICE_NAME }}/system.img;${{ github.event.inputs.DEVICE_NAME }}/*.zip"" -t "Release ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}" -n "${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}"
       continue-on-error: true
       env:
