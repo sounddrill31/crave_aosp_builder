@@ -130,6 +130,16 @@ jobs:
         fi
 
         crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ scripts ~/OrangeFox_sync ${{ github.event.inputs.REMOVALS }} && \
+
+        # Clone local_manifests repository
+        git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
+
+        if [ ! $? == 0 ]; then \
+          curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
+        fi \
+
+        # Sync the repositories
+        repo sync -c -j\$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
         #Orangefox Specific Commands
         sudo apt install git aria2 -y; \
         git clone https://gitlab.com/OrangeFox/misc/scripts; \
@@ -144,16 +154,6 @@ jobs:
         cd ~/OrangeFox_sync/sync/; \
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
         cd /tmp/src/android; \
-
-        # Clone local_manifests repository
-        git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
-
-        if [ ! $? == 0 ]; then \
-          curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
-        fi \
-        
-        # Sync the repositories
-        repo sync -c -j\$(nproc --all) --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync  && \
         
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
