@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Start job for building through Crave(self-hosted)
+name: Restart Selfhosted Runner
 on:
   workflow_dispatch:
 
