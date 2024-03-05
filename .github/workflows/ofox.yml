@@ -20,7 +20,7 @@ on:
       BUILD_DIFFERENT_ROM:
         description: "orangefox_sync.sh command"
         required: false
-        default: "./orangefox_sync.sh --branch 12.1 --path /tmp/src/android"
+        default: "bash ~/OrangeFox_sync/orangefox_sync.sh --branch 12.1 --path /tmp/src/android"
       REMOVALS:
         description: "Folders to be removed before syncing:"
         required: false
@@ -143,17 +143,13 @@ jobs:
         #Orangefox Specific Commands
         sudo apt install git aria2 -y; \
         git clone https://gitlab.com/OrangeFox/misc/scripts; \
-        cd scripts; \
-        sudo bash setup/android_build_env.sh; \
-        sudo bash setup/install_android_sdk.sh; \
+        sudo bash scripts/setup/android_build_env.sh; \
+        sudo bash scripts/setup/install_android_sdk.sh; \
 
         #Sync OrangeFox
         mkdir ~/OrangeFox_sync; \
-        cd ~/OrangeFox_sync; \
-        git clone https://gitlab.com/OrangeFox/sync.git # (or, using ssh, "git clone git@gitlab.com:OrangeFox/sync.git"); \
-        cd ~/OrangeFox_sync/sync/; \
+        git clone https://gitlab.com/OrangeFox/sync.git ~/OrangeFox_sync # (or, using ssh, "git clone git@gitlab.com:OrangeFox/sync.git"); \
         ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
-        cd /tmp/src/android; \
         
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
