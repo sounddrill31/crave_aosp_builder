@@ -249,14 +249,7 @@ jobs:
       # Directly upload to releases.
     - name: Upload to repository's releases page
       run: |
-        mkdir upload
-        mv ${{ github.event.inputs.DEVICE_NAME }}/recovery.img upload/recovery.img ;
-        mv ${{ github.event.inputs.DEVICE_NAME }}/boot.img upload/boot.img ;
-        mv ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img upload/vendor_boot.img ;
-        mv ${{ github.event.inputs.DEVICE_NAME }}/vendor.img upload/vendor.img ;
-        mv ${{ github.event.inputs.DEVICE_NAME }}/system.img upload/system.img ;
-        mv ${{ github.event.inputs.DEVICE_NAME }}/*.zip upload/;
-        gh release create "${{ github.run_id }}" "upload/*" -t "Release ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}" -n "${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}"
+        bash upload.sh
       continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
