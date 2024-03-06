@@ -173,6 +173,7 @@ jobs:
     - name: Retrive build artifact(s)
       run: |
         crave pull out/target/product/*/*.img
+        crave pull out/target/product/*/*.zip
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
