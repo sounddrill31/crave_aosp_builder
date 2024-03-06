@@ -182,7 +182,8 @@ jobs:
           ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           ${{ github.event.inputs.DEVICE_NAME }}/boot.img
           ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-        name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
+          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
+        name: Orangefox-${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
           Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
