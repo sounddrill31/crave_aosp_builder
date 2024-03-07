@@ -131,10 +131,21 @@ jobs:
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
       run: |
-        mkdir "${HOME}/bin"
-        curl https://storage.googleapis.com/git-repo-downloads/repo >> "${HOME}/bin/repo"
-        chmod a+x "${HOME}/bin/repo"
-        sudo ln -sf "/home/${USER}/bin/repo" "/usr/bin/repo"
+        # Check if repo is already installed
+        if ! command -v repo >/dev/null 2>&1; then
+          echo "Repo not found. Installing now..."
+          # Create bin directory if it doesn't exist
+          mkdir -p ~/bin
+          # Download repo script
+          curl https://storage.googleapis.com/git-repo-downloads/repo >> ~/bin/repo
+          # Make repo script executable
+          chmod a+x ~/bin/repo
+          # Create symbolic link to /usr/bin/repo
+          sudo ln -sf "/home/$(whoami)/bin/repo" "/usr/bin/repo"
+          echo "Repo installation complete."
+        else
+          echo "Repo already installed."
+        fi
       continue-on-error: true
       
       # Generate 'git' credential in base of the workflow's author.
