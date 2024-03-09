@@ -41,7 +41,7 @@ jobs:
 
     - name: Run crave devspace
       run: |
-          /usr/bin/bash {0}
+          /usr/bin/bash
           tmux kill-session -t ghactions;
           tmux new-session -d -s ghactions 
           tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
