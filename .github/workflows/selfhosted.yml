@@ -113,9 +113,14 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-      # Clean the workflow before initialization.
-    - name: Cleanup
-      run: rm -rf ${PWD}/*
+      # Create a project folder
+    - name: Create Project Folders
+      run: |
+        if [ -d "${{ github.event.inputs.BASE_PROJECT }}" ]; then
+          echo "${{ github.event.inputs.BASE_PROJECT }} directory exists, skipping..."
+        else
+          mkdir "${{ github.event.inputs.BASE_PROJECT }}"
+        fi
 
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -127,6 +132,7 @@ jobs:
         mkdir ${{ github.event.inputs.DEVICE_NAME }}
         cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
+      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
 
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
@@ -157,7 +163,10 @@ jobs:
       # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
       run: |
-             if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
+        rm -rf tester
+        mkdir tester
+        cd tester 
+        if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
               case "${{ github.event.inputs.BASE_PROJECT }}" in
                   "ArrowOS 13.1")
                     repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
@@ -175,7 +184,7 @@ jobs:
              else
                       ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
                       
-              fi
+              fi 
               git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
               timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
               rm -rf .repo
@@ -215,7 +224,8 @@ jobs:
             repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
           ;;
         esac
-        
+      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
+
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
       run: |
@@ -244,30 +254,33 @@ jobs:
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
+      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
       timeout-minutes: 720  
       
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
       run: crave stop --all
+      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
 
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
+      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor.img
-          ${{ github.event.inputs.DEVICE_NAME }}/system.img
-          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
+          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/boot.img
+          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/vendor.img
+          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/system.img
+          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
@@ -281,4 +294,4 @@ jobs:
       run: |
         telegram-upload ${{ github.event.inputs.DEVICE_NAME }}/recovery.img ${{ github.event.inputs.DEVICE_NAME }}/boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor.img ${{ github.event.inputs.DEVICE_NAME }}/system.img ${{ github.event.inputs.DEVICE_NAME }}/*.zip
       continue-on-error: true
-      
+      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
