@@ -116,10 +116,24 @@ jobs:
       # Create a project folder
     - name: Create Project Folders
       run: |
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
+        "ArrowOS 13.1")
+          export PROJECTFOLDER = ArrowOS13
+        ;;
+        "DerpFest 13.0")
+          export PROJECTFOLDER = DerpFest13
+        ;;
+        "LineageOS 21.0")
+          export PROJECTFOLDER = Lineage21
+        ;;
+        "LineageOS 20.0")
+          export PROJECTFOLDER = Lineage20
+        ;;
+        esac
         if [ -d "${{ github.event.inputs.BASE_PROJECT }}" ]; then
           echo "${{ github.event.inputs.BASE_PROJECT }} directory exists, skipping..."
         else
-          mkdir "${{ github.event.inputs.BASE_PROJECT }}"
+          mkdir $PROJECTFOLDER
         fi
 
       # Check-out in order to access the repository's files.
@@ -132,7 +146,7 @@ jobs:
         mkdir ${{ github.event.inputs.DEVICE_NAME }}
         cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
-      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
+      working-directory: ./$PROJECTFOLDER
 
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
@@ -224,7 +238,7 @@ jobs:
             repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
           ;;
         esac
-      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
+      working-directory: ./$PROJECTFOLDER
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
@@ -254,33 +268,33 @@ jobs:
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
+      working-directory: ./$PROJECTFOLDER
       timeout-minutes: 720  
       
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
       run: crave stop --all
-      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
+      working-directory: ./$PROJECTFOLDER
 
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
-      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
+      working-directory: ./$PROJECTFOLDER
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/vendor.img
-          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/system.img
-          ${{ github.event.inputs.BASE_PROJECT }}/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/boot.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/vendor.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/system.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
@@ -294,4 +308,4 @@ jobs:
       run: |
         telegram-upload ${{ github.event.inputs.DEVICE_NAME }}/recovery.img ${{ github.event.inputs.DEVICE_NAME }}/boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor.img ${{ github.event.inputs.DEVICE_NAME }}/system.img ${{ github.event.inputs.DEVICE_NAME }}/*.zip
       continue-on-error: true
-      working-directory: ./"${{ github.event.inputs.BASE_PROJECT }}"
+      working-directory: ./$PROJECTFOLDER
