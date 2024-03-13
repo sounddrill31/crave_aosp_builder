@@ -20,6 +20,7 @@ on:
           - 'LineageOS 21.0'
           - 'ArrowOS 13.1'
           - 'DerpFest 13.0'
+          - 'CipherOS 14'
       BUILD_DIFFERENT_ROM:
         description: "Command to initialize a different 'repo' project:"
         required: false
@@ -118,7 +119,7 @@ jobs:
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
-          export PROJECTFOLDER = ArrowOS13
+          export PROJECTFOLDER = Arrow13
         ;;
         "DerpFest 13.0")
           export PROJECTFOLDER = DerpFest13
@@ -128,6 +129,9 @@ jobs:
         ;;
         "LineageOS 20.0")
           export PROJECTFOLDER = Lineage20
+        ;;
+        "CipherOS 14")
+          export PROJECTFOLDER = Cipher14
         ;;
         esac
         if [ -d "${{ github.event.inputs.BASE_PROJECT }}" ]; then
@@ -194,6 +198,9 @@ jobs:
                   "LineageOS 20.0")
                     repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
                   ;;
+                  "CipherOS 14")
+                    repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1
+                  ;;
               esac
              else
                       ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
@@ -236,6 +243,9 @@ jobs:
           ;;
           "LineageOS 20.0")
             repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
+          ;;
+          "CipherOS 14")
+            repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1
           ;;
         esac
       working-directory: ./$PROJECTFOLDER

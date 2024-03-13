@@ -78,7 +78,7 @@ jobs:
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
-          export PROJECTFOLDER = ArrowOS13
+          export PROJECTFOLDER = Arrow13
         ;;
         "DerpFest 13.0")
           export PROJECTFOLDER = DerpFest13
@@ -88,6 +88,9 @@ jobs:
         ;;
         "LineageOS 20.0")
           export PROJECTFOLDER = Lineage20
+        ;;
+        "CipherOS 14")
+          export PROJECTFOLDER = Cipher14
         ;;
         esac
         if [ -d "${{ github.event.inputs.BASE_PROJECT }}" ]; then
@@ -156,8 +159,8 @@ jobs:
                   "LineageOS 21.0")
                     repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
                   ;;
-                  "LineageOS 20.0")
-                    repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
+                  "CipherOS 14")
+                    repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1
                   ;;
               esac
              else
@@ -167,8 +170,8 @@ jobs:
               git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
               timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
               rm -rf .repo
-      timeout-minutes: 10  
-      
+      timeout-minutes: 10
+
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
@@ -201,9 +204,11 @@ jobs:
           "LineageOS 20.0")
             repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
           ;;
+          "CipherOS 14")
+            repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1
+          ;;
         esac
       working-directory: ./$PROJECTFOLDER
-      id: pwd
         
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
