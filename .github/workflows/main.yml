@@ -159,6 +159,9 @@ jobs:
                   "LineageOS 21.0")
                     repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
                   ;;
+                  "LineageOS 20.0")
+                    repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
+                  ;;
                   "CipherOS 14")
                     repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1
                   ;;
