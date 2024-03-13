@@ -134,8 +134,8 @@ jobs:
           export PROJECTFOLDER = Cipher14
         ;;
         esac
-        if [ -d "${{ github.event.inputs.BASE_PROJECT }}" ]; then
-          echo "${{ github.event.inputs.BASE_PROJECT }} directory exists, skipping..."
+        if [ -d "$PROJECTFOLDER" ]; then
+          echo "$PROJECTFOLDER directory exists, skipping..."
         else
           mkdir $PROJECTFOLDER
         fi
