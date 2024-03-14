@@ -100,7 +100,7 @@ jobs:
           echo "$PROJECTFOLDER directory exists, skipping..."
         else
           mkdir $PROJECTFOLDER
-          chmod 777 $PROJECTFOLDER
+          sudo chmod 777 $PROJECTFOLDER
         fi
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
 
