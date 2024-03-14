@@ -143,14 +143,19 @@ jobs:
         timeout-minutes: 10
 
       - name: Setup 'crave' environment
-        if: ${{ env.DCDEVSPACE != '1' }}
         run: |
-          curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
-          mv ${PWD}/crave ${HOME}/bin/
-          sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
-          envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
-          rm -rf ${PWD}/crave.conf.sample
-          cp crave.conf $PROJECTFOLDER
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/accupara/crave/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          INSTALLED_VERSION=$(crave --version)
+          if [[ $LATEST_VERSION != $INSTALLED_VERSION ]]; then
+            curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
+            mv ${PWD}/crave ${HOME}/bin/
+            sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
+            envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
+            rm -rf ${PWD}/crave.conf.sample
+            cp crave.conf $PROJECTFOLDER
+          else
+            echo "Crave is already up to date."
+          fi
         env:
           CRAVE_USERNAME: ${{ secrets.CRAVE_USERNAME }}
           CRAVE_TOKEN: ${{ secrets.CRAVE_TOKEN }}
