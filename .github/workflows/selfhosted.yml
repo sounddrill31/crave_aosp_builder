@@ -139,7 +139,6 @@ jobs:
         else
           mkdir $PROJECTFOLDER
         fi
-        rm project_folder.txt || true
         echo $PROJECTFOLDER > project_folder.txt
         
       # Check-out in order to access the repository's files.
