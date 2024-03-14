@@ -273,8 +273,8 @@ jobs:
     - name: Retrive build artifact(s)
       run: |
         cd $PROJECTFOLDER
-        crave pull out/target/product/*/*.zip
-        crave pull out/target/product/*/*.img
+        crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+        crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.img
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
