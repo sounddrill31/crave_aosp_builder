@@ -119,19 +119,19 @@ jobs:
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
-          export PROJECTFOLDER = Arrow13
+          export PROJECTFOLDER="/crave-devspaces/Arrow13"
         ;;
         "DerpFest 13.0")
-          export PROJECTFOLDER = DerpFest13
+          export PROJECTFOLDER="/crave-devspaces/DerpFest13"
         ;;
         "LineageOS 21.0")
-          export PROJECTFOLDER = Lineage21
+          export PROJECTFOLDER="/crave-devspaces/Lineage21"
         ;;
         "LineageOS 20.0")
-          export PROJECTFOLDER = Lineage20
+          export PROJECTFOLDER="/crave-devspaces/Lineage20"
         ;;
         "CipherOS 14")
-          export PROJECTFOLDER = Cipher14
+          export PROJECTFOLDER="/crave-devspaces/Cipher14"
         ;;
         esac
         if [ -d "$PROJECTFOLDER" ]; then
@@ -150,7 +150,7 @@ jobs:
         mkdir ${{ github.event.inputs.DEVICE_NAME }}
         cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
-      working-directory: ./$PROJECTFOLDER
+      working-directory: $PROJECTFOLDER
 
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
@@ -253,10 +253,10 @@ jobs:
             export BUILD_DIFFERENT_ROM="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
           ;;
           *)
-            export BUILD_DIFFERENT_ROM=${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
+            export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
           ;;
         esac
-      working-directory: ./$PROJECTFOLDER
+      working-directory: $PROJECTFOLDER
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
@@ -286,21 +286,21 @@ jobs:
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      working-directory: ./$PROJECTFOLDER
+      working-directory: $PROJECTFOLDER
       timeout-minutes: 720  
       
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
       run: crave stop --all
-      working-directory: ./$PROJECTFOLDER
+      working-directory: $PROJECTFOLDER
 
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
-      working-directory: ./$PROJECTFOLDER
+      working-directory: $PROJECTFOLDER
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
@@ -326,4 +326,4 @@ jobs:
       run: |
         telegram-upload ${{ github.event.inputs.DEVICE_NAME }}/recovery.img ${{ github.event.inputs.DEVICE_NAME }}/boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor.img ${{ github.event.inputs.DEVICE_NAME }}/system.img ${{ github.event.inputs.DEVICE_NAME }}/*.zip
       continue-on-error: true
-      working-directory: ./$PROJECTFOLDER
+      working-directory: $PROJECTFOLDER
