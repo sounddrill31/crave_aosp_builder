@@ -139,8 +139,7 @@ jobs:
         else
           mkdir $PROJECTFOLDER
         fi
-        touch project_folder.txt
-        echo $PROJECTFOLDER > project_folder.txt
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -149,8 +148,7 @@ jobs:
       # Set-up a spearate directory for the device.
     - name: Set-up workspace environment
       run: |
-        export PROJECTFOLDER=$(cat project_folder.txt)
-        cd $PROJECTNAME
+        cd $PROJECTFOLDER
         mkdir ${{ github.event.inputs.DEVICE_NAME }}
         cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
@@ -184,8 +182,7 @@ jobs:
       # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
       run: |
-        export PROJECTFOLDER=$(cat project_folder.txt)
-        cd $PROJECTNAME
+        cd $PROJECTFOLDER
         rm -rf tester
         mkdir tester
         cd tester 
@@ -219,8 +216,7 @@ jobs:
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
-        export PROJECTFOLDER=$(cat project_folder.txt)
-        cd $PROJECTNAME
+        cd $PROJECTFOLDER
         if [ "${DCDEVSPACE}" == "1" ]; then
         echo 'No need to set up crave, we are already running in devspace!'
         else
@@ -237,8 +233,7 @@ jobs:
       # Initialize the previously choosen 'repo' project and create a 'crave' job for building.
     - name: Set the 'crave' project and start compilation through 'crave'
       run: |
-        export PROJECTFOLDER=$(cat project_folder.txt)
-        cd $PROJECTNAME
+        cd $PROJECTFOLDER
         jq '.projects = []' ~/crave.conf > tmp && mv tmp ~/crave.conf
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "ArrowOS 13.1")
@@ -297,15 +292,13 @@ jobs:
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
       run: |
-        export PROJECTFOLDER=$(cat project_folder.txt)
-        cd $PROJECTNAME
+        cd $PROJECTFOLDER
         crave stop --all
 
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
-        export PROJECTFOLDER=$(cat project_folder.txt)
-        cd $PROJECTNAME
+        cd $PROJECTFOLDER
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
 
@@ -331,7 +324,6 @@ jobs:
       # Upload to Telegram
     - name: Upload Using telegram-upload
       run: |
-        export PROJECTFOLDER=$(cat project_folder.txt)
-        cd $PROJECTNAME
+        cd $$PROJECTFOLDER
         telegram-upload ${{ github.event.inputs.DEVICE_NAME }}/recovery.img ${{ github.event.inputs.DEVICE_NAME }}/boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor.img ${{ github.event.inputs.DEVICE_NAME }}/system.img ${{ github.event.inputs.DEVICE_NAME }}/*.zip
       continue-on-error: true
