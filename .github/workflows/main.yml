@@ -76,21 +76,23 @@ jobs:
       # Create a project folder
     - name: Create Project Folders
       run: |
+        mkdir -p devspace
+        sudo ln -sf ${pwd}/devspace /crave-devspaces
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
-          export PROJECTFOLDER = Arrow13
+          export PROJECTFOLDER="/crave-devspaces/Arrow13"
         ;;
         "DerpFest 13.0")
-          export PROJECTFOLDER = DerpFest13
+          export PROJECTFOLDER="/crave-devspaces/DerpFest13"
         ;;
         "LineageOS 21.0")
-          export PROJECTFOLDER = Lineage21
+          export PROJECTFOLDER="/crave-devspaces/Lineage21"
         ;;
         "LineageOS 20.0")
-          export PROJECTFOLDER = Lineage20
+          export PROJECTFOLDER="/crave-devspaces/Lineage20"
         ;;
         "CipherOS 14")
-          export PROJECTFOLDER = Cipher14
+          export PROJECTFOLDER="/crave-devspaces/Cipher14"
         ;;
         esac
         if [ -d "$PROJECTFOLDER" ]; then
@@ -98,6 +100,7 @@ jobs:
         else
           mkdir $PROJECTFOLDER
         fi
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
 
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -109,7 +112,6 @@ jobs:
         mkdir ${{ github.event.inputs.DEVICE_NAME }}
         cd ${{ github.event.inputs.DEVICE_NAME }}
       continue-on-error: true
-      working-directory: ./$PROJECTFOLDER
 
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
@@ -145,6 +147,7 @@ jobs:
       # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
       run: |
+            cd $PROJECTFOLDER
             rm -rf tester
             mkdir tester
             cd tester 
@@ -186,6 +189,7 @@ jobs:
           sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
           envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
           rm -rf ${PWD}/crave.conf.sample
+          cp crave.conf $PROJECTFOLDER
         fi
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
@@ -216,14 +220,16 @@ jobs:
             export BUILD_DIFFERENT_ROM="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
           ;;
           *)
-            export BUILD_DIFFERENT_ROM=${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
+            export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
           ;;
         esac
-      working-directory: ./$PROJECTFOLDER
+        echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
         
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
       run: |
+        cd $PROJECTFOLDER
+
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="clean"
         fi
@@ -250,21 +256,22 @@ jobs:
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      working-directory: ./$PROJECTFOLDER
 
 
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
-      run: crave stop --all
-      working-directory: ./$PROJECTFOLDER
+      run: |
+        cd $PROJECTFOLDER
+        crave stop --all
 
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
+        cd $PROJECTFOLDER
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
-      working-directory: ./$PROJECTFOLDER
+
       # Directly upload to releases.
     - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1

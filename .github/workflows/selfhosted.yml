@@ -224,7 +224,8 @@ jobs:
           mv ${PWD}/crave ${HOME}/bin/
           sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
           envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
-          rm -rf ${PWD}/crave.conf.sample          
+          rm -rf ${PWD}/crave.conf.sample       
+          cp crave.conf $PROJECTFOLDER 
         fi
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
@@ -234,7 +235,6 @@ jobs:
     - name: Set the 'crave' project
       run: |
         cd $PROJECTFOLDER
-        jq '.projects = []' ~/crave.conf > tmp && mv tmp ~/crave.conf
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "ArrowOS 13.1")
             repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
@@ -257,9 +257,10 @@ jobs:
             export BUILD_DIFFERENT_ROM="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
           ;;
           *)
-            echo "BUILD_DIFFERENT_ROM=${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" >> "$GITHUB_ENV"
+            export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
           ;;
         esac
+        echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
