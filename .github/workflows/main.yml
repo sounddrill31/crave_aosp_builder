@@ -141,11 +141,6 @@ jobs:
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-        if [ -z ${GITHUB_TOKEN} ]; then
-          echo machine github.com login ${GITHUB_TOKEN} password ${GITHUB_TOKEN} >> ${PWD}/.netrc
-        fi
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
@@ -238,7 +233,6 @@ jobs:
            export CLEAN="clean"
         fi
 
-        crave push ${PWD}/.netrc -d ${HOME}/.netrc
         crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         $BUILD_DIFFERENT_ROM ; \
