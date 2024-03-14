@@ -230,8 +230,8 @@ jobs:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
 
-      # Initialize the previously choosen 'repo' project and create a 'crave' job for building.
-    - name: Set the 'crave' project and start compilation through 'crave'
+      # Initialize the previously choosen 'repo' project.
+    - name: Set the 'crave' project
       run: |
         cd $PROJECTFOLDER
         jq '.projects = []' ~/crave.conf > tmp && mv tmp ~/crave.conf
@@ -257,10 +257,16 @@ jobs:
             export BUILD_DIFFERENT_ROM="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
           ;;
           *)
-            export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+            echo "BUILD_DIFFERENT_ROM=${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" >> "$GITHUB_ENV"
           ;;
         esac
 
+      # Create a 'crave' job for building.
+    - name: Start compilation through 'crave'
+      run: |
+        cd $PROJECTFOLDER
+        
+        jq '.projects = []' ~/crave.conf > tmp && mv tmp ~/crave.conf
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="clean"
         fi
