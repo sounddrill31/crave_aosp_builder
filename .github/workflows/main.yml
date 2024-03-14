@@ -77,7 +77,7 @@ jobs:
     - name: Create Project Folders
       run: |
         mkdir -p devspace
-        mkdir -p /crave-devspaces
+        sudo mkdir -p /crave-devspaces
         sudo ln -sf ${pwd}/devspace /crave-devspaces
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
