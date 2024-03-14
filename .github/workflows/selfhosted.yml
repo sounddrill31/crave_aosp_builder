@@ -116,8 +116,8 @@ jobs:
     steps:
       # Create a project folder
     - name: Create Project Folders
-      script:
-        - case "${{ github.event.inputs.BASE_PROJECT }}" in
+      run: |
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
           export PROJECTFOLDER="/crave-devspaces/Arrow13"
         ;;
