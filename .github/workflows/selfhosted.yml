@@ -139,6 +139,7 @@ jobs:
         else
           mkdir $PROJECTFOLDER
         fi
+        touch project_folder.txt
         echo $PROJECTFOLDER > project_folder.txt
         
       # Check-out in order to access the repository's files.
@@ -233,8 +234,8 @@ jobs:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
 
-      # Initialize the previously choosen 'repo' project.
-    - name: Set the 'crave' project
+      # Initialize the previously choosen 'repo' project and create a 'crave' job for building.
+    - name: Set the 'crave' project and start compilation through 'crave'
       run: |
         export PROJECTFOLDER=$(cat project_folder.txt)
         cd $PROJECTNAME
@@ -265,11 +266,6 @@ jobs:
           ;;
         esac
 
-      # Create a 'crave' job for building.
-    - name: Start compilation through 'crave'
-      run: |
-        export PROJECTFOLDER=$(cat project_folder.txt)
-        cd $PROJECTNAME
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="clean"
         fi
