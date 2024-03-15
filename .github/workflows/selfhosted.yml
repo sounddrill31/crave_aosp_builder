@@ -226,6 +226,7 @@ jobs:
           envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
           rm -rf ${PWD}/crave.conf.sample       
           cp crave.conf $PROJECTFOLDER 
+          cp crave.yaml $PROJECTFOLDER/.repo/manifests
         fi
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}

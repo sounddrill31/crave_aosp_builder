@@ -1,0 +1,11 @@
+#This is a template, modify as you like
+CipherOS:
+  ignoreClientHostname: true
+Arrow OS:
+  ignoreClientHostname: true
+DerpFest-aosp:
+  ignoreClientHostname: true
+LOS 20:
+  ignoreClientHostname: true
+LOS 21:
+  ignoreClientHostname: true #ignoreClientHostname is used to keep persistence by ignoring the client hostname
