@@ -258,10 +258,10 @@ jobs:
             repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1
             export BUILD_DIFFERENT_ROM="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
           ;;
-          *)
-            export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
-          ;;
         esac
+        if [[ -n "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" ]]; then
+          export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+        fi
         echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
 
       # Create a 'crave' job for building.
