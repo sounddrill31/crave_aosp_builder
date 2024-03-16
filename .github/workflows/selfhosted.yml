@@ -238,7 +238,6 @@ jobs:
     - name: Set the 'crave' project
       run: |
         cd $PROJECTFOLDER
-        if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "ArrowOS 13.1")
             repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
@@ -261,8 +260,11 @@ jobs:
             export BUILD_DIFFERENT_ROM="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
           ;;
         esac
+        if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
+          echo "Building ${{ github.event.inputs.BASE_PROJECT }}"
         else
           export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+          echo "Building $BUILD_DIFFERENT_ROM"
         fi
         echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
 
