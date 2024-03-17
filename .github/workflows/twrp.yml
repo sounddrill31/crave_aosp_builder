@@ -151,7 +151,6 @@ jobs:
       # Initialize the previously choosen 'repo' project.
     - name: Set the 'crave' project
       run: |
-            repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
         cd $PROJECTFOLDER
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "TWRP 12.1")
