@@ -70,9 +70,16 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-      # Clean the workflow before initialization.
-    - name: Cleanup
-      run: rm -rf ${PWD}/*
+      # Create a project folder
+    - name: Create Project Folders
+      run: |
+        mkdir -p devspace
+        sudo mkdir -p /crave-devspaces
+        sudo ln -sf ${pwd}/devspace /crave-devspaces
+        sudo chmod 777 /crave-devspaces
+        export PROJECTFOLDER="/crave-devspaces/TWRP"
+        mkdir -p $PROJECTFOLDER
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
 
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -99,6 +106,28 @@ jobs:
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      
+      # Test Your Personal 'Local Manifests' against The ROM
+    - name: Test Local Manifests
+      run: |
+            cd $PROJECTFOLDER
+            rm -rf tester
+            mkdir tester
+            cd tester 
+            if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
+              case "${{ github.event.inputs.BASE_PROJECT }}" in
+                  "TWRP 12.1")
+                    repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
+                  ;;
+              esac
+             else
+                      ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
+                      
+              fi
+              git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
+              timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
+              rm -rf .repo
+      timeout-minutes: 10
 
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
@@ -110,9 +139,10 @@ jobs:
           mv ${PWD}/crave ${HOME}/bin/
           sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
           envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
-          rm -rf ${PWD}/crave.conf.sample          
+          rm -rf ${PWD}/crave.conf.sample  
+          cp crave.conf $PROJECTFOLDER        
         fi
-          cp crave.yaml.twrp .repo/manifests/crave.yaml
+          cp crave.yaml.twrp $PROJECTFOLDER/.repo/manifests/crave.yaml
 
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
@@ -122,18 +152,33 @@ jobs:
     - name: Set the 'crave' project
       run: |
             repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+        cd $PROJECTFOLDER
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
+          "TWRP 12.1")
+            repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+            export BUILD_DIFFERENT_ROM="repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1"
+          ;;
+        esac
+        if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
+          echo "Building ${{ github.event.inputs.BASE_PROJECT }}"
+        else
+          export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+        fi
+        echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
       id: pwd
         
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
-      run: |
+      run: |        
+        cd $PROJECTFOLDER
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="clean"
         fi
 
         crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
-        ${{ github.event.inputs.BUILD_DIFFERENT_ROM }} ; \
+        $BUILD_DIFFERENT_ROM ; \
+
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
 
         if [ ! $? == 0 ]; then \
@@ -157,21 +202,26 @@ jobs:
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
-      run: crave stop --all
+      run: |
+        cd $PROJECTFOLDER
+        crave stop --all
 
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
-        crave pull out/target/product/*/*.img
+        cd $PROJECTFOLDER
+        crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+        crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.img
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/boot.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
