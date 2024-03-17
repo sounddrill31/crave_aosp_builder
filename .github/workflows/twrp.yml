@@ -120,7 +120,6 @@ jobs:
     - name: Set the 'crave' project
       run: |
             repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
-            crave set --projectID 78
       id: pwd
         
       # Create a 'crave' job for building.
