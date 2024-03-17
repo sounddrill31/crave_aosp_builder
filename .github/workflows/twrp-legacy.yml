@@ -112,7 +112,7 @@ jobs:
           envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
           rm -rf ${PWD}/crave.conf.sample          
         fi
-          cp crave.yaml.twrp .repo/manifests/crave.yaml
+          cp crave.yaml.twrp.legacy .repo/manifests/crave.yaml
 
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
