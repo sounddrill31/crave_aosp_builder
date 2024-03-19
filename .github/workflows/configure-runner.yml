@@ -1,0 +1,55 @@
+#Needs to be run once only!
+name: Setup Selfhosted Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+        GITHUB_REPO:
+            description: 'Repository'
+            default: 'sounddrill31/crave_aosp_builder'
+            required: true
+        RUNNER_TOKEN:
+            description: 'This is the runner token, not PAT'
+            required: true
+        
+jobs:
+  run-devspace-and-tmux:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tmux
+      # Download and configure 'crave'.
+    - name: Configure the 'crave' environment
+      run: |
+        if [ "${DCDEVSPACE}" == "1" ]; then
+        echo 'No need to set up crave, we are already running in devspace!'
+        else
+          mkdir ${HOME}/bin/
+          curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
+          mv ${PWD}/crave ${HOME}/bin/
+          sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
+          envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
+          rm -rf ${PWD}/crave.conf.sample          
+        fi
+      env:
+        CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
+        CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
+
+    - name: Run crave devspace
+      run: |
+        crave devspace -- "rm -rf actions-runner ~/actions-runner || true
+        curl https://raw.githubusercontent.com/sounddrill31/Install-GithubActions-Runner/crave_aosp_builder/fetch-latest-zip.sh | bash
+        cd actions-runner
+        if [[ "${{ inputs.RUNNER_TOKEN }}" == "github_pat_*" ]]; then
+          echo "PAT does not work!"
+        else
+            echo "Runner token found"
+        fi
+         cd y17ltebuilds
+         ./config.sh --unattended --url "https://github.com/${{ inputs.GITHUB_REPO }}" --token "${{ inputs.RUNNER_TOKEN }}""
