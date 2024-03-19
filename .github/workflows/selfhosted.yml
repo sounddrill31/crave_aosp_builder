@@ -117,6 +117,15 @@ jobs:
       # Create a project folder
     - name: Create Project Folders
       run: |
+        if [ "${DCDEVSPACE}" != "1" ]; then
+          echo "Symlinking devspace folder"
+          mkdir -p devspace
+          sudo mkdir -p /crave-devspaces
+          sudo ln -sf ${pwd}/devspace /crave-devspaces
+          sudo chmod 777 /crave-devspaces
+        else
+          echo "We are already running in devspace... Skipping Symlinks"
+        fi
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
           export PROJECTFOLDER="/crave-devspaces/Arrow13"
