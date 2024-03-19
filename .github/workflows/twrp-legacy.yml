@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Start job for building TWRP through Crave.
+name: TWRP Builder(Legacy)
 on:
   workflow_dispatch:
     # Various inputs to simplify usage of workflow.
