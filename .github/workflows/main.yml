@@ -277,6 +277,7 @@ jobs:
     - name: Retrive build artifact(s)
       run: |
         cd $PROJECTFOLDER
+        crave ssh -- sleep 1
         crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.img
 
