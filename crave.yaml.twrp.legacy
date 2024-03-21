@@ -1,4 +1,4 @@
 #This is a template, modify as you like
 TWRP:
   ignoreClientHostname: true #ignoreClientHostname is used to keep persistence by ignoring the client hostname
-  image: "sounddrill31/crave-archlinux-twrp@sha256:71f0936b69029cedfee1a34ca3495bb63c9a7544f3d757dc77aa8494fca772fd" #This docker image uses python2
+  image: "sounddrill31/crave-archlinux-twrp@sha256:605892162a907ea3760813643c9aa1bdb63a7ae0dce6ca159b0f6e20a7c0815b" #This docker image uses python2
