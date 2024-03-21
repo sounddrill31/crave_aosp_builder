@@ -45,6 +45,7 @@ Ensure you have no random spaces before or after
 ### Removals
     - When we resync another ROM on top, we are bound to get "cannot checkout" errors. To fix this, we add that folder to the Removals tab
     - Add a space after .repo/local_manifests and add these folders. Don't change if you don't need to
+    - Almost defunct now, since /opt/crave/resync.sh script on crave handles everything for us
 ### Local Manifest
     - Here you enter the git repo and branch for your local manifests, containing device specific repositories. These will be cloned to .repo/local_manifests
 ### Device Details
