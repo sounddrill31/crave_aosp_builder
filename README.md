@@ -8,7 +8,8 @@ foss.crave.io account
 - Fork this repo
 - Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
 - Copy your username and authentication token from crave.conf
-  ![image](https://github.com/sounddrill31/crave_aosp_builder/assets/84176052/147255e1-39de-4e0a-a48e-fce81faf3162)
+![Repository Secrets](assets/runners.png)
+
 - Create a Repository Secret called CRAVE_USERNAME, with username from crave.conf
 - Create a Repository Secret called CRAVE_TOKEN, with authentication token from crave.conf
 - Go to Settings -> Code and Automation -> Actions -> General
@@ -22,13 +23,15 @@ These runners sit in crave devspace CLI or your personal server and run the work
 - Follow the above steps
 - On the top menu bar of the repository, click on Actions
 - Self-Hosted Runner -> New Runner
-![image](https://github.com/sounddrill31/crave_aosp_builder/assets/84176052/31cdc938-c421-498b-a61b-6b79992ce1ba)
+![Self Hosted Runners](assets/runners.png)
 - Scroll down and copy the Runner Token(avoid closing this tab till the process is done)
-![alt text](image.png)
+![Finding Runner Token](assets/token-1.png)
+
 - Go back to Actions, select "Setup Selfhosted Runner"
 - Run Workflow and enter your Runner token.
 Ensure you have no random spaces before or after
-![alt text](image-1.png)
+![Using Runner token](assets/token-2.png)
+
 - Start the workflow
 - After this is done, you are ready to trigger Selfhosted builds. 
 
