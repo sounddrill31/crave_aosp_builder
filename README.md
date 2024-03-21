@@ -15,15 +15,22 @@ foss.crave.io account
 - Set workflow Permissions to "Read and Write Permissions" and save.
 - Edit .github/workflows/main.yml to change build hostname, build username, git username and git email to your liking
 
+## Selfhosted Runners:
+These runners sit in crave devspace CLI or your personal server and run the workflow on there. This is useful for bypassing the 6 hours timeout limit. 
+
 ## Extra Setup For Selfhosted runner:
 - Follow the above steps
 - On the top menu bar of the repository, click on Actions
 - Self-Hosted Runner -> New Runner
 ![image](https://github.com/sounddrill31/crave_aosp_builder/assets/84176052/31cdc938-c421-498b-a61b-6b79992ce1ba)
-- Enter Devspace
-    https://opendroid.pugzarecute.com/wiki/Crave_Devspace#How_to_Prepare_Environment
-- Follow the instructions given by github to set up your runner
-- Do not run ./run.sh, instead, start your build through workflow dispatch
+- Scroll down and copy the Runner Token(avoid closing this tab till the process is done)
+![alt text](image.png)
+- Go back to Actions, select "Setup Selfhosted Runner"
+- Run Workflow and enter your Runner token.
+Ensure you have no random spaces before or after
+![alt text](image-1.png)
+- Start the workflow
+- After this is done, you are ready to trigger Selfhosted builds. 
 
 ## Inputs Explanation
 ### Base Project
