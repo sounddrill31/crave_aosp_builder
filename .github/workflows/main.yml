@@ -276,10 +276,8 @@ jobs:
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
-        echo "Finding the Size of Workspace"
-        crave ssh -- "du -sh ."
-        echo "Retrieving build artifact(s)"
         cd $PROJECTFOLDER
+        crave ssh -- sleep 1
         crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.img
 
