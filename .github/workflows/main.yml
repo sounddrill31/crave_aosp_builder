@@ -205,7 +205,7 @@ jobs:
           cp crave.yaml $PROJECTFOLDER/.repo/manifests
           echo "No Custom Configuration Found, Using Template!"
         else
-          touch $PROJECTFOLDER/.repo/manifests/crave.yaml
+          touch $PROJECTFOLDER/.repo/manifests/crave.yaml || true
           echo "${{ secrets.CUSTOM_YAML }}" > $PROJECTFOLDER/.repo/manifests/crave.yaml
           echo "Custom Configuration Found!"
         fi
