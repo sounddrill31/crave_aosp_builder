@@ -193,7 +193,6 @@ jobs:
         mkdir -p $PROJECTFOLDER/.repo/manifests
         if [ "${DCDEVSPACE}" == "1" ]; then
           echo 'No need to set up crave, we are already running in devspace!'
-          cp crave.yaml $PROJECTFOLDER/.repo/manifests
         else
           curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
           mv ${PWD}/crave ${HOME}/bin/
@@ -201,7 +200,14 @@ jobs:
           envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
           rm -rf ${PWD}/crave.conf.sample
           cp crave.conf $PROJECTFOLDER
+        fi
+        if [[ -z "${{ secrets.CUSTOM_YAML }}" ]]; then
           cp crave.yaml $PROJECTFOLDER/.repo/manifests
+          echo "No Custom Configuration Found, Using Template!"
+        else
+          touch $PROJECTFOLDER/.repo/manifests/crave.yaml
+          echo "${{ secrets.CUSTOM_YAML }}" > $PROJECTFOLDER/.repo/manifests/crave.yaml
+          echo "Custom Configuration Found!"
         fi
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
