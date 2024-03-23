@@ -142,7 +142,7 @@ jobs:
           rm -rf ${PWD}/crave.conf.sample  
           cp crave.conf $PROJECTFOLDER        
         fi
-       if [[ -z "${{ secrets.CUSTOM_YAML }}" ]]; then
+        if [[ -z "${{ secrets.CUSTOM_YAML }}" ]]; then
           cp crave.yaml.twrp $PROJECTFOLDER/.repo/manifests
           echo "No Custom Configuration Found, Using Template!"
         else
