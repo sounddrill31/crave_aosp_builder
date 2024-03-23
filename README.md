@@ -43,7 +43,8 @@ This is the Authorization part of the crave.conf. It should not contain `:`, spa
 ### CUSTOM_YAML (Optional)
 If this exists, the crave.yaml will be overridden while running the workflow
 example:
-```CipherOS:
+```
+CipherOS:
   ignoreClientHostname: true
 Arrow OS:
   ignoreClientHostname: true
