@@ -328,8 +328,8 @@ jobs:
       run: |
         crave ssh -- sleep 1
         cd $PROJECTFOLDER
-        crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
-        crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.img
+        crave pull out/target/product/*/*.zip
+        crave pull out/target/product/*/*.img
 
       # Directly upload to releases.
     - name: Upload to repository's releases page
@@ -339,7 +339,7 @@ jobs:
           ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/boot.img
           ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ env.PROJECTFOLDER }}TFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/vendor.img
+          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/vendor.img
           ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/system.img
           ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
