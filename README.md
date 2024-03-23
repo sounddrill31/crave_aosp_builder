@@ -35,6 +35,26 @@ Ensure you have no random spaces before or after
 - Start the workflow
 - After this is done, you are ready to trigger Selfhosted builds. 
 
+## Required Secrets
+### CRAVE_USERNAME (Required)
+This is the email you signed up to crave with 
+### CRAVE_TOKEN (Required)
+This is the Authorization part of the crave.conf. It should not contain `:`, spaces, or `,`
+### CUSTOM_YAML (Optional)
+If this exists, the crave.yaml will be overridden while running the workflow
+example:
+```CipherOS:
+  ignoreClientHostname: true
+Arrow OS:
+  ignoreClientHostname: true
+DerpFest-aosp:
+  ignoreClientHostname: true
+LOS 20:
+  ignoreClientHostname: true
+LOS 21:
+  ignoreClientHostname: true
+```
+For more info, read the documentation [here](https://foss.crave.io/docs/crave-usage/#location-of-the-craveyaml-file)
 ## Inputs Explanation
 ### Base Project
     - These are the projects everyone can build, with a foss.crave.io account
