@@ -149,6 +149,7 @@ jobs:
 
       # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
+      if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
       run: |
             cd $PROJECTFOLDER
             rm -rf tester
