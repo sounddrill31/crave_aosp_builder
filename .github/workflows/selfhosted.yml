@@ -290,6 +290,7 @@ jobs:
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
+      if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
       run: |
         cd $PROJECTFOLDER
         

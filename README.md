@@ -63,6 +63,7 @@ For more info, read the documentation [here](https://foss.crave.io/docs/crave-us
 ### Repo init Command
     - This is only for when you are initializing another ROM. When doing this, ensure you are initializing on top of closest cousin base project
     - Don't initialize android 14 on top of android 13 projects
+    - If you just type 'skip', it will skip the compilation. This is useful for uploading and debugging
 ### Removals
     - When we resync another ROM on top, we are bound to get "cannot checkout" errors. To fix this, we add that folder to the Removals tab
     - Add a space after .repo/local_manifests and add these folders. Don't change if you don't need to
