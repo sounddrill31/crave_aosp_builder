@@ -80,6 +80,7 @@ jobs:
         export PROJECTFOLDER="/crave-devspaces/TWRP"
         mkdir -p $PROJECTFOLDER
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
+        echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
 
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -218,15 +219,18 @@ jobs:
         crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.img
 
+        # For Upload compatibility
+        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
+
       # Directly upload to releases.
     - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
+          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
