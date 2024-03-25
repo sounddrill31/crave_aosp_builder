@@ -149,6 +149,7 @@ jobs:
           mkdir $PROJECTFOLDER
         fi
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
+        echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
         
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -339,17 +340,20 @@ jobs:
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
 
+        # For Upload compatibility
+        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
+
       # Directly upload to releases.
     - name: Upload to repository's releases page
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/vendor.img
-          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/system.img
-          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
+          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+          ${{ github.event.inputs.DEVICE_NAME }}/vendor.img
+          ${{ github.event.inputs.DEVICE_NAME }}/system.img
+          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
@@ -365,13 +369,16 @@ jobs:
         crave ssh -- sleep 1
         crave pull out/error.log
 
+        # For Upload compatibility
+        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
+
       # Upload Errors
     - name: Upload error.log
       if: ${{ steps.errorlog.conclusion == 'success' }}
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ env.PROJECTFOLDER }}/out/error.log
+          out/error.log
         name: Error ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: Failed-${{ github.run_id }}
         body: |
@@ -382,6 +389,6 @@ jobs:
       # Upload to Telegram
     - name: Upload Using telegram-upload
       run: |
-        cd $$PROJECTFOLDER
+        cd $PROJECTFOLDER
         telegram-upload ${{ github.event.inputs.DEVICE_NAME }}/recovery.img ${{ github.event.inputs.DEVICE_NAME }}/boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor.img ${{ github.event.inputs.DEVICE_NAME }}/system.img ${{ github.event.inputs.DEVICE_NAME }}/*.zip
       continue-on-error: true
