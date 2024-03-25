@@ -344,18 +344,40 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/vendor.img
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/system.img
-          $PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/boot.img
+          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
+          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/vendor.img
+          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/system.img
+          ${{ env.PROJECTFOLDER }}/${{ github.event.inputs.DEVICE_NAME }}/*.zip
         name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
           Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+
+      # Pull Errors
+    - name: Pull error.log
+      id: errorlog
+      run: |
+        cd $PROJECTFOLDER
+        crave ssh -- sleep 1
+        crave pull out/error.log
+
+      # Upload Errors
+    - name: Upload error.log
+      if: ${{ steps.errorlog.conclusion == 'success' }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${{ env.PROJECTFOLDER }}/out/error.log
+        name: Error ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
+        tag_name: Failed-${{ github.run_id }}
+        body: |
+          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Upload to Telegram
     - name: Upload Using telegram-upload
