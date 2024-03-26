@@ -363,6 +363,7 @@ jobs:
 
       # Pull Errors
     - name: Pull error.log
+      if: ${{ failure() }}
       id: errorlog
       run: |
         cd $PROJECTFOLDER
