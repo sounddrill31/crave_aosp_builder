@@ -292,7 +292,9 @@ jobs:
       # Pull '.zip's and '.img's from 'crave'.
     - name: Retrive build artifact(s)
       run: |
+        rm -rf */*.zip */*.img || echo "No leftover zips"
         cd $PROJECTFOLDER
+        rm -rf */*.zip */*.img || echo "No leftover zips"
         crave ssh -- sleep 1
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
