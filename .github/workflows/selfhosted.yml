@@ -114,6 +114,9 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
+    - name: Cleanup
+      run: rm -rf * # This cleans github actions workspace
+
       # Create a project folder
     - name: Create Project Folders
       run: |
@@ -129,26 +132,36 @@ jobs:
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
           export PROJECTFOLDER="/crave-devspaces/Arrow13"
+          export PROJECTID="73"
         ;;
         "DerpFest 13.0")
           export PROJECTFOLDER="/crave-devspaces/DerpFest13"
+          export PROJECTID="64"
         ;;
         "LineageOS 21.0")
           export PROJECTFOLDER="/crave-devspaces/Lineage21"
+          export PROJECTID="72"
         ;;
         "LineageOS 20.0")
           export PROJECTFOLDER="/crave-devspaces/Lineage20"
+          export PROJECTID="36"
         ;;
         "CipherOS 14")
           export PROJECTFOLDER="/crave-devspaces/Cipher14"
+          export PROJECTID="79"
         ;;
         esac
-        if [ -d "$PROJECTFOLDER" ]; then
-          echo "$PROJECTFOLDER directory exists, skipping..."
+        if [ "${DCDEVSPACE}" == "1" ]; then
+          echo "Running in devspace, using crave clone create!"
+          crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
+          crave clone create --projectID $PROJECTID $PROJECTFOLDER
         else
+          echo "Running outside devspace, making folder!"
+          rm -rf $PROJECTFOLDER || true
           mkdir $PROJECTFOLDER
         fi
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
+        echo "PROJECTID=$PROJECTID" >> "$GITHUB_ENV"
         echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
         
       # Check-out in order to access the repository's files.
@@ -395,3 +408,7 @@ jobs:
         cd $PROJECTFOLDER
         telegram-upload ${{ github.event.inputs.DEVICE_NAME }}/recovery.img ${{ github.event.inputs.DEVICE_NAME }}/boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor.img ${{ github.event.inputs.DEVICE_NAME }}/system.img ${{ github.event.inputs.DEVICE_NAME }}/*.zip
       continue-on-error: true
+
+      # Remove 'crave' clone
+    - name: Destroy Crave Clone
+      run: crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
