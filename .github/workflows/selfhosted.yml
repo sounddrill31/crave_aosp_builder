@@ -237,6 +237,7 @@ jobs:
               fi \
     
               timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
+              du -csh .
               rm -rf .repo
       timeout-minutes: 10  
       
