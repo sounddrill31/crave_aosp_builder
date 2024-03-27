@@ -152,11 +152,9 @@ jobs:
         ;;
         esac
           crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
-          crave clone create --projectID $PROJECTID $PROJECTFOLDER
-          if [ $? = 0 ] ; then
-          echo "Crave clone create failed!"
-          mkdir $PROJECTFOLDER
-        fi
+          crave clone create --projectID $PROJECTID $PROJECTFOLDER || \
+          echo "Crave clone create failed!"; \
+          mkdir $PROJECTFOLDER;
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
