@@ -151,17 +151,14 @@ jobs:
           export PROJECTID="79"
         ;;
         esac
-        if [ "${DCDEVSPACE}" == "1" ]; then
-          echo "Running in devspace, using crave clone create!"
           crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
           crave clone create --projectID $PROJECTID $PROJECTFOLDER
-        else
-          echo "Running outside devspace, making folder!"
-          rm -rf $PROJECTFOLDER || true
+          if [ $? == 0 ] ; then
+          echo "Crave clone create failed!"
           mkdir $PROJECTFOLDER
         fi
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
-        echo "PROJECTID=$PROJECTID" >> "$GITHUB_ENV"
+        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
         
       # Check-out in order to access the repository's files.
@@ -206,7 +203,6 @@ jobs:
     - name: Test Local Manifests
       if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
       run: |
-        cd $PROJECTFOLDER
         rm -rf tester
         mkdir tester
         cd tester 
