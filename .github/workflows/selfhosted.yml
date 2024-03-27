@@ -153,7 +153,7 @@ jobs:
         esac
           crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
           crave clone create --projectID $PROJECTID $PROJECTFOLDER
-          if [ $? == 0 ] ; then
+          if [ $? = 0 ] ; then
           echo "Crave clone create failed!"
           mkdir $PROJECTFOLDER
         fi
