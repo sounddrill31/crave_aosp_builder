@@ -151,10 +151,13 @@ jobs:
           export PROJECTID="79"
         ;;
         esac
+        if grep -q "$PROJECTFOLDER" <(crave clone list --json | jq -r '.clones[]."Cloned At"') && [ "${DCDEVSPACE}" == "1" ]; then
           crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
-          crave clone create --projectID $PROJECTID $PROJECTFOLDER || \
-          echo "Crave clone create failed!"; \
-          mkdir $PROJECTFOLDER;
+          crave clone create --projectID $PROJECTID $PROJECTFOLDER || echo "Crave clone create failed!"
+        else          
+        rm -rf $PROJECTFOLDER || true
+        mkdir $PROJECTFOLDER
+        fi
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
