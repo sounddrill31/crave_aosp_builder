@@ -353,25 +353,31 @@ jobs:
         crave pull out/target/product/*/*.img
 
         # For Upload compatibility
-        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
+        # cp -r ${{ github.event.inputs.DEVICE_NAME }}/* $OLDDIR
 
-      # Directly upload to releases.
-    - name: Upload to repository's releases page
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor.img
-          ${{ github.event.inputs.DEVICE_NAME }}/system.img
-          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
-        name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
-        tag_name: ${{ github.run_id }}
-        body: |
-          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
+      # Create Github releases.
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.run_id }}
+        release_name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
+        draft: false
+        prerelease: false
+
+        # Upload to Github releases.
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: $(find "$PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}" -type f -name '*.zip' -exec realpath {} \;)
+        asset_name: $(find "$PROJECTFOLDER/${{ github.event.inputs.DEVICE_NAME }}" -type f -name '*.zip' -exec basename {} \;)
+        asset_content_type: application/zip
 
       # Pull Errors
     - name: Pull error.log
@@ -383,7 +389,7 @@ jobs:
         crave pull out/error.log
 
         # For Upload compatibility
-        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
+        cp -r out $OLDDIR
 
       # Upload Errors
     - name: Upload error.log

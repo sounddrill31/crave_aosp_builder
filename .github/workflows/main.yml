@@ -329,7 +329,7 @@ jobs:
         crave pull out/error.log
 
         # For Upload compatibility
-        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
+        cp -r out $OLDDIR
 
       # Upload Errors
     - name: Upload error.log
