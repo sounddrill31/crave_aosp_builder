@@ -295,7 +295,6 @@ jobs:
         rm -rf */*.zip */*.img || echo "No leftover zips"
         cd $PROJECTFOLDER
         rm -rf */*.zip */*.img || echo "No leftover zips"
-        crave ssh -- sleep 1
         crave pull out/target/product/*/*.zip
         crave pull out/target/product/*/*.img
 
