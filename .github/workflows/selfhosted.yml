@@ -368,7 +368,8 @@ jobs:
     - name: Upload Using telegram-upload
       run: |
         cd $PROJECTFOLDER
-        telegram-upload ${{ github.event.inputs.DEVICE_NAME }}/recovery.img ${{ github.event.inputs.DEVICE_NAME }}/boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img ${{ github.event.inputs.DEVICE_NAME }}/vendor.img ${{ github.event.inputs.DEVICE_NAME }}/system.img ${{ github.event.inputs.DEVICE_NAME }}/*.zip
+        crave push ~/.config/telegram-upload.json ~/.config/telegram-upload.session -d /home/admin/.config
+        crave ssh -- "sudo pip3 install -U telegram-upload; telegram-upload out/target/product/*/*.zip out/target/product/*/*.img"
       continue-on-error: true
 
       # Remove 'crave' clone
