@@ -343,36 +343,14 @@ jobs:
         cd $PROJECTFOLDER
         crave stop --all
 
-      # Pull '.zip's and '.img's from 'crave'.
-    - name: Retrive build artifact(s)
+      # Upload '.zip's and '.img's directly from 'crave' ssh.
+    - name: Upload build artifact(s)
       run: |
-        rm -rf */*.zip */*.img || echo "No leftover zips"
         cd $PROJECTFOLDER
-        rm -rf */*.zip */*.img || echo "No leftover zips"
-        crave ssh -- sleep 1
-        crave pull out/target/product/*/*.zip
-        crave pull out/target/product/*/*.img
-
-        # For Upload compatibility
-        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
-
-      # Directly upload to releases.
-    - name: Upload to repository's releases page
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor.img
-          ${{ github.event.inputs.DEVICE_NAME }}/system.img
-          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
-        name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
-        tag_name: ${{ github.run_id }}
-        body: |
-          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+        echo "${{ secrets.GITHUB_TOKEN }}" > token.txt
+        crave push token.txt -d $(crave ssh -- pwd | grep -v Select | sed -s 's/\r//g')/
+        crave ssh -- "echo "${{ secrets.GITHUB_TOKEN }}" > token.txt;
+                      bash /opt/crave/github-actions/upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}'"
 
       # Pull Errors
     - name: Pull error.log
