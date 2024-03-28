@@ -298,7 +298,7 @@ jobs:
         crave ssh -- "echo "${{ secrets.GITHUB_TOKEN }}" > token.txt;
                       bash /opt/crave/github-actions/upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}'"
 
-      # Pull Errors
+      # Pull Errors and Display them
     - name: Pull error.log
       if: ${{ failure() }}
       id: errorlog
@@ -306,21 +306,5 @@ jobs:
         cd $PROJECTFOLDER
         crave ssh -- sleep 1
         crave pull out/error.log
-
-        # For Upload compatibility
-        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
-
-      # Upload Errors
-    - name: Upload error.log
-      if: ${{ steps.errorlog.conclusion == 'success' }}
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          out/error.log
-        name: Error ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
-        tag_name: Failed-${{ github.run_id }}
-        body: |
-          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+        echo "Displaying out/error.log"
+        cat out/error.log
