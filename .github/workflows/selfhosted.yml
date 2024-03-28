@@ -354,7 +354,7 @@ jobs:
                       bash /opt/crave/github-actions/upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}'"
 
       # Pull Errors and Display them
-    - name: Pull error.log
+    - name: Display error.log
       if: ${{ failure() }}
       id: errorlog
       run: |
