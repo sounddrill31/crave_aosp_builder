@@ -348,7 +348,7 @@ jobs:
       run: |
         cd $PROJECTFOLDER
         echo "${{ secrets.GITHUB_TOKEN }}" > token.txt
-        crave push token.txt -d token.txt
+        crave push token.txt -d ./token.txt
         crave ssh -- "curl -O https://gist.githubusercontent.com/sounddrill31/491917753765441d00d1faa2040e3471/raw/cc15536e3c963e8dcc41f860ad41c977cc5aaf70/upload.sh
                       bash upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}'"
 
