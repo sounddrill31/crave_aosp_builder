@@ -345,6 +345,7 @@ jobs:
 
       # Upload '.zip's and '.img's directly from 'crave' ssh.
     - name: Upload build artifact(s)
+      continue-on-error: true
       run: |
         cd $PROJECTFOLDER
         echo "${{ secrets.GITHUB_TOKEN }}" > token.txt
