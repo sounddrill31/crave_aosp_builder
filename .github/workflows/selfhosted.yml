@@ -350,8 +350,7 @@ jobs:
         echo "${{ secrets.GITHUB_TOKEN }}" > token.txt
         crave push token.txt -d $(crave ssh -- pwd | grep -v Select | sed -s 's/\r//g')/
         crave ssh -- "echo "${{ secrets.GITHUB_TOKEN }}" > token.txt;
-                      curl -O https://gist.githubusercontent.com/sounddrill31/491917753765441d00d1faa2040e3471/raw/87da16ae773158f66a69eee011653c0ee5fcf3ee/upload.sh;
-                      bash upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}'"
+                      bash /opt/crave/github-actions/upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}'"
 
       # Pull Errors
     - name: Pull error.log
