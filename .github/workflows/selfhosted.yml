@@ -330,6 +330,9 @@ jobs:
         export BUILD_HOSTNAME=crave ; \
         source build/envsetup.sh && \
 
+        echo "Repository: ${{ github.repository }}"; \
+        echo "Run ID: ${{ github.run_id }}"; \
+
         # Build the ROM
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
