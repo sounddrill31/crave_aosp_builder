@@ -46,7 +46,7 @@ person@example.com
 ### CRAVE_TOKEN (Required)
 This is the Authorization part of the crave.conf. It should not contain `:`, spaces, or `,`
 
-![image](https://github.com/sounddrill31/crave_aosp_builder/assets/84176052/9b7a06c7-a37a-46a8-a107-4d5574f88a3e)
+![CRAVE_TOKEN](assets/cravetoken.png)
 ### CUSTOM_YAML (Optional)
 If this exists, the crave.yaml will be overridden while running the workflow
 
