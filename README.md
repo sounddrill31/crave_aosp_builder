@@ -14,7 +14,6 @@ foss.crave.io account
 - Create a Repository Secret called CRAVE_TOKEN, with authentication token from crave.conf
 - Go to Settings -> Code and Automation -> Actions -> General
 - Set workflow Permissions to "Read and Write Permissions" and save.
-- Edit .github/workflows/main.yml to change build hostname, build username, git username and git email to your liking
 
 ## Selfhosted Runners:
 These runners sit in crave devspace CLI or your personal server and run the workflow on there. This is useful for bypassing the 6 hours timeout limit. 
