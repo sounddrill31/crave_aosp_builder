@@ -14,9 +14,9 @@ foss.crave.io account
 - Create a Repository Secret called CRAVE_TOKEN, with authentication token from crave.conf
 - Go to Settings -> Code and Automation -> Actions -> General
 - Set workflow Permissions to "Read and Write Permissions" and save.
-
+- Now you are ready to build! Go to "Crave Builder" workflow and start building
 ## Selfhosted Runners:
-These runners sit in crave devspace CLI or your personal server and run the workflow on there. This is useful for bypassing the 6 hours timeout limit. 
+These runners sit in crave devspace CLI or your personal server and run the workflow on there. Use this if you need to bypass the 6 hours timeout limit.
 
 ## Extra Setup For Selfhosted runner:
 - Follow the above steps
@@ -32,7 +32,7 @@ Ensure you have no random spaces before or after
 ![Using Runner token](assets/token-2.png)
 
 - Start the workflow
-- After this is done, you are ready to trigger Selfhosted builds. 
+- After this is done, you are ready to build! Go to the "Crave Builder(self-hosted)" workflow and start building 
 
 ## Required Secrets
 ### CRAVE_USERNAME (Required)
@@ -90,12 +90,12 @@ For more info, read the documentation [here](https://foss.crave.io/docs/crave-us
 
 - eng:  Development configuration with faster build time; most suited for day-to-day development
 ### Clean Build
-  - Uses fresh Base Project sources without any of our changes(use only for testing/debugging)
+  - Uses fresh Base Project sources without any of your changes(use only for testing/debugging)
 
 ## Known Issues
   - You Tell Me :)
 ## Extra Info
-  - For scheduled builds, it's better to remove the workflow dispatch stuff.
+  - For scheduled builds, it's better to remove the workflow dispatch stuff, check [lineage_builder](https://github.com/a57y17lte-dev/lineage_builder) for reference.
   - This Repo is a spiritual successor to azwhikaru's Action-TWRP-Builder
 ## Credits!
   - [AntoninoScordino](https://github.com/AntoninoScordino) for the recent rewrite
