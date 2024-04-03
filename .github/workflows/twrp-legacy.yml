@@ -137,7 +137,13 @@ jobs:
         case "${{ github.event.inputs.BASE_PROJECT }}" in
           "TWRP 12.1")
             repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
-      id: pwd
+        esac
+        if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
+          echo "Building ${{ github.event.inputs.BASE_PROJECT }}"
+        else
+          export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+        fi
+        echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
 
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
