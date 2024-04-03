@@ -130,6 +130,15 @@ jobs:
               rm -rf .repo
       timeout-minutes: 10
 
+      # Initialize the previously choosen 'repo' project.
+    - name: Set the 'crave' project
+      run: |
+        cd $PROJECTFOLDER
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
+          "TWRP 12.1")
+            repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+      id: pwd
+
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
@@ -144,7 +153,7 @@ jobs:
           cp crave.conf $PROJECTFOLDER        
         fi
         if [[ -z "${{ secrets.CUSTOM_YAML }}" ]]; then
-          cp crave.yaml.twrp.legacy $PROJECTFOLDER/.repo/manifests
+          cp crave.yaml.twrp $PROJECTFOLDER/.repo/manifests
           echo "No Custom Configuration Found, Using Template!"
         else
           touch $PROJECTFOLDER/.repo/manifests/crave.yaml || true
@@ -154,24 +163,6 @@ jobs:
       env:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
-
-      # Initialize the previously choosen 'repo' project.
-    - name: Set the 'crave' project
-      run: |
-        cd $PROJECTFOLDER
-        case "${{ github.event.inputs.BASE_PROJECT }}" in
-          "TWRP 12.1")
-            repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
-            export BUILD_DIFFERENT_ROM="repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1"
-          ;;
-        esac
-        if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
-          echo "Building ${{ github.event.inputs.BASE_PROJECT }}"
-        else
-          export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
-        fi
-        echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
-      id: pwd
         
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
@@ -212,28 +203,10 @@ jobs:
         cd $PROJECTFOLDER
         crave stop --all
 
-      # Pull '.zip's and '.img's from 'crave'.
-    - name: Retrive build artifact(s)
+      # Upload '.zip's and '.img's directly from 'crave' ssh.
+    - name: Upload build artifact(s)
       run: |
         cd $PROJECTFOLDER
-        crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
-        crave pull out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.img
-
-        # For Upload compatibility
-        cp -r ${{ github.event.inputs.DEVICE_NAME }} $OLDDIR
-
-      # Directly upload to releases.
-    - name: Upload to repository's releases page
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          ${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          ${{ github.event.inputs.DEVICE_NAME }}/*.zip
-        name: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}
-        tag_name: ${{ github.run_id }}
-        body: |
-          Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        echo "${{ secrets.GITHUB_TOKEN }}" > token.txt
+        crave push token.txt -d $(crave ssh -- pwd | grep -v Select | sed -s 's/\r//g')/
+        crave ssh -- "bash /opt/crave/github-actions/upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}'"
