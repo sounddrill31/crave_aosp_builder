@@ -106,74 +106,11 @@ jobs:
           tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
           echo "Runner Started"
         fi "
+
   test:
-    timeout-minutes: 720      
-    name: Build using foss.crave.io
-    needs: run-devspace-and-tmux    
-    runs-on: self-hosted
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+    name: Test Local Manifests
+    runs-on: ubuntu-latest
     steps:
-    - name: Cleanup
-      run: rm -rf * # This cleans github actions workspace
-
-      # Create a project folder
-    - name: Create Project Folders
-      run: |
-        if [ "${DCDEVSPACE}" != "1" ]; then
-          echo "Symlinking devspace folder"
-          mkdir -p devspace
-          sudo mkdir -p /crave-devspaces
-          sudo ln -sf ${pwd}/devspace /crave-devspaces
-          sudo chmod 777 /crave-devspaces
-        else
-          echo "We are already running in devspace... Skipping Symlinks"
-        fi
-        case "${{ github.event.inputs.BASE_PROJECT }}" in
-        "ArrowOS 13.1")
-          export PROJECTFOLDER="/crave-devspaces/Arrow13"
-          export PROJECTID="73"
-        ;;
-        "DerpFest 13.0")
-          export PROJECTFOLDER="/crave-devspaces/DerpFest13"
-          export PROJECTID="64"
-        ;;
-        "LineageOS 21.0")
-          export PROJECTFOLDER="/crave-devspaces/Lineage21"
-          export PROJECTID="72"
-        ;;
-        "LineageOS 20.0")
-          export PROJECTFOLDER="/crave-devspaces/Lineage20"
-          export PROJECTID="36"
-        ;;
-        "CipherOS 14")
-          export PROJECTFOLDER="/crave-devspaces/Cipher14"
-          export PROJECTID="79"
-        ;;
-        esac
-        if grep -q "$PROJECTFOLDER" <(crave clone list --json | jq -r '.clones[]."Cloned At"') && [ "${DCDEVSPACE}" == "1" ]; then
-          crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
-          crave clone create --projectID $PROJECTID $PROJECTFOLDER || echo "Crave clone create failed!"
-        else          
-        rm -rf $PROJECTFOLDER || true
-        mkdir $PROJECTFOLDER
-        fi
-        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
-        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
-        echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
-        
-      # Check-out in order to access the repository's files.
-    - name: Check-out to repository
-      uses: actions/checkout@v4
-
-      # Set-up a spearate directory for the device.
-    - name: Set-up workspace environment
-      run: |
-        cd $PROJECTFOLDER
-        mkdir ${{ github.event.inputs.DEVICE_NAME }}
-        cd ${{ github.event.inputs.DEVICE_NAME }}
-      continue-on-error: true
-
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
       run: |
@@ -239,7 +176,82 @@ jobs:
               timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
               du -csh .
               rm -rf .repo
-      timeout-minutes: 10  
+      timeout-minutes: 10
+
+
+  build:
+    timeout-minutes: 720      
+    name: Build using foss.crave.io
+    needs: test 
+    runs-on: self-hosted
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+    - name: Cleanup
+      run: rm -rf * # This cleans github actions workspace
+
+      # Create a project folder
+    - name: Create Project Folders
+      run: |
+        if [ "${DCDEVSPACE}" != "1" ]; then
+          echo "Symlinking devspace folder"
+          mkdir -p devspace
+          sudo mkdir -p /crave-devspaces
+          sudo ln -sf ${pwd}/devspace /crave-devspaces
+          sudo chmod 777 /crave-devspaces
+        else
+          echo "We are already running in devspace... Skipping Symlinks"
+        fi
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
+        "ArrowOS 13.1")
+          export PROJECTFOLDER="/crave-devspaces/Arrow13"
+          export PROJECTID="73"
+        ;;
+        "DerpFest 13.0")
+          export PROJECTFOLDER="/crave-devspaces/DerpFest13"
+          export PROJECTID="64"
+        ;;
+        "LineageOS 21.0")
+          export PROJECTFOLDER="/crave-devspaces/Lineage21"
+          export PROJECTID="72"
+        ;;
+        "LineageOS 20.0")
+          export PROJECTFOLDER="/crave-devspaces/Lineage20"
+          export PROJECTID="36"
+        ;;
+        "CipherOS 14")
+          export PROJECTFOLDER="/crave-devspaces/Cipher14"
+          export PROJECTID="79"
+        ;;
+        esac
+        if grep -q "$PROJECTFOLDER" <(crave clone list --json | jq -r '.clones[]."Cloned At"') && [ "${DCDEVSPACE}" == "1" ]; then
+          crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
+          crave clone create --projectID $PROJECTID $PROJECTFOLDER || echo "Crave clone create failed!"
+        else          
+        rm -rf $PROJECTFOLDER || true
+        mkdir $PROJECTFOLDER
+        fi
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
+        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
+        echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
+        
+      # Check-out in order to access the repository's files.
+    - name: Check-out to repository
+      uses: actions/checkout@v4
+
+      # Set-up a spearate directory for the device.
+    - name: Set-up workspace environment
+      run: |
+        cd $PROJECTFOLDER
+        mkdir ${{ github.event.inputs.DEVICE_NAME }}
+        cd ${{ github.event.inputs.DEVICE_NAME }}
+      continue-on-error: true
+      
+      # Generate 'git' credential in base of the workflow's author.
+    - name: Set-up 'git' credential(s)
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
       
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
