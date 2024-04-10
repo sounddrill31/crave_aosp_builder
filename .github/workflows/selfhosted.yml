@@ -106,9 +106,11 @@ jobs:
           tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
           echo "Runner Started"
         fi "
+
   test:
     name: Test Local Manifests
     runs-on: ubuntu-latest
+    steps:
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
       run: |
