@@ -89,18 +89,24 @@ jobs:
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
           export PROJECTFOLDER="/crave-devspaces/Arrow13"
+          export REPO_INIT="repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1"
+
         ;;
         "DerpFest 13.0")
           export PROJECTFOLDER="/crave-devspaces/DerpFest13"
+          export REPO_INIT="repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1"
         ;;
         "LineageOS 21.0")
           export PROJECTFOLDER="/crave-devspaces/Lineage21"
+          export REPO_INIT="repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1"
         ;;
         "LineageOS 20.0")
           export PROJECTFOLDER="/crave-devspaces/Lineage20"
+          export REPO_INIT="repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1"
         ;;
         "CipherOS 14")
           export PROJECTFOLDER="/crave-devspaces/Cipher14"
+          export REPO_INIT="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
         ;;
         esac
         if [ -d "$PROJECTFOLDER" ]; then
@@ -110,6 +116,8 @@ jobs:
         fi
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
+        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
+
 
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -219,35 +227,18 @@ jobs:
     - name: Set the 'crave' project
       run: |
         cd $PROJECTFOLDER
-        case "${{ github.event.inputs.BASE_PROJECT }}" in
-          "ArrowOS 13.1")
-            repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
-            export BUILD_DIFFERENT_ROM="repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1"
-          ;;
-          "DerpFest 13.0")
-            repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
-            export BUILD_DIFFERENT_ROM="repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1"
-          ;;
-          "LineageOS 21.0")
-            repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
-            export BUILD_DIFFERENT_ROM="repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1"
-          ;;
-          "LineageOS 20.0")
-            repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1
-            export BUILD_DIFFERENT_ROM="repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1"
-          ;;
-          "CipherOS 14")
-            repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1
-            export BUILD_DIFFERENT_ROM="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
-          ;;
-        esac
+        echo "Running $REPO_INIT"
+        $REPO_INIT
+
         if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
-          echo "Building ${{ github.event.inputs.BASE_PROJECT }}"
+          export BUILD_DIFFERENT_ROM="$REPO_INIT"
+          echo "Building $BUILD_DIFFERENT_ROM"
         else
           export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+          echo "Building $BUILD_DIFFERENT_ROM"
         fi
         echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
-        
+
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
       if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
