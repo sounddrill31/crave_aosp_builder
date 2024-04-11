@@ -13,7 +13,7 @@ rm -rf actions-runner || true
     exit 1
   fi # Fetch version
   
-  url=https://github.com/actions/runner/releases/download/v${version}/actions-runner-linux-x64-${version}.tar.gz # Fetch URL
+  url=https://github.com/actions/runner/releases/download/v${version}/actions   -runner-linux-x64-${version}.tar.gz # Fetch URL
   url=$(echo "$url" | xargs) # Remove leading/trailing whitespace
   if ! wget -O actions-runner-linux-x64.tar.gz "${url}"; then
     echo "Failed to download the runner package"
@@ -21,6 +21,7 @@ rm -rf actions-runner || true
   fi
   
   echo "Extracting Zip"
-  tar -xvf actions-runner-linux-x64.tar.gz
+    mkdir -p actions-runner
+    tar -xvf actions-runner-linux-x64.tar.gz -C actions-runner
   echo "Removing Leftovers"
-  rm -rf actions-runner-linux-x64.tar.gz # Extract package and remove leftovers
+    rm -rf actions-runner-linux-x64.tar.gz # Extract package and remove leftovers
