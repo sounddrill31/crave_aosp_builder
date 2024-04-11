@@ -1,5 +1,15 @@
 # crave_aosp_builder
 
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[forks-shield]: https://img.shields.io/github/forks/Floorp-Projects/Floorp?style=for-the-badge
+[forks-url]: https://github.com/Floorp-Projects/Floorp/network/members
+[stars-shield]: https://img.shields.io/github/stars/Floorp-Projects/Floorp.svg?style=for-the-badge
+[stars-url]: https://github.com/Floorp-Projects/Floorp/stargazers
+
 ## Prerequisites 
 foss.crave.io account
 
