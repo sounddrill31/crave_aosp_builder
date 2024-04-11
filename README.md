@@ -5,10 +5,10 @@
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[forks-shield]: https://img.shields.io/github/forks/Floorp-Projects/Floorp?style=for-the-badge
-[forks-url]: https://github.com/Floorp-Projects/Floorp/network/members
-[stars-shield]: https://img.shields.io/github/stars/Floorp-Projects/Floorp.svg?style=for-the-badge
-[stars-url]: https://github.com/Floorp-Projects/Floorp/stargazers
+[forks-shield]: https://img.shields.io/github/forks/sounddrill31/crave_aosp_builder?style=for-the-badge
+[forks-url]: https://github.com/sounddrill31/crave_aosp_builder/network/members
+[stars-shield]: https://img.shields.io/github/stars/sounddrill31/crave_aosp_builder.svg?style=for-the-badge
+[stars-url]: https://github.com/sounddrill31/crave_aosp_builder/stargazers
 
 ## Prerequisites 
 foss.crave.io account
