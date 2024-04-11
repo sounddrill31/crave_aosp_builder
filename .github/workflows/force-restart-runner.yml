@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Restart Selfhosted Runner
+name: Start/Restart Selfhosted Runner
 on:
   workflow_dispatch:
 

@@ -36,13 +36,14 @@ These runners sit in crave devspace CLI or your personal server and run the work
 - Scroll down and copy the Runner Token(avoid closing this tab till the process is done)
 ![Finding Runner Token](assets/token-1.png)
 
-- Go back to Actions, select "Setup Selfhosted Runner"
+- Go back to Actions, select "Create Selfhosted Runner"
 - Run Workflow and enter your Runner token.
 Ensure you have no random spaces before or after
 ![Using Runner token](assets/token-2.png)
 
 - Start the workflow
-- After this is done, you are ready to build! Go to the "Crave Builder(self-hosted)" workflow and start building 
+- After this is done, you are ready to build! Go to the "Crave Builder(self-hosted)" workflow and start building
+(If the runner is offline still, trigger "Start/Restart Selfhosted Runner" workflow to force-restart the selfhosted runner)
 
 ## Required Secrets
 ### CRAVE_USERNAME (Required)

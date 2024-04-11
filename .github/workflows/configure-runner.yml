@@ -1,5 +1,5 @@
 #Needs to be run once only!
-name: Setup Selfhosted Runner
+name: Create Selfhosted Runner
 
 on:
   workflow_dispatch:
