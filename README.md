@@ -18,7 +18,7 @@ foss.crave.io account
 - Fork this repo
 - Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
 - Copy your username and authentication token from crave.conf
-![Repository Secrets](assets/runners.png)
+![Repository Secrets](assets/cravetoken.png)
 
 - Create a Repository Secret called CRAVE_USERNAME, with username from crave.conf
 - Create a Repository Secret called CRAVE_TOKEN, with authentication token from crave.conf
