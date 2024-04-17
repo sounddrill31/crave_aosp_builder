@@ -197,6 +197,17 @@ jobs:
               rm -rf .repo
       timeout-minutes: 10
 
+      # Send Build 'start' notification
+    - name: Telegram Notification
+      if: ${{ success()}} && secrets.TELEGRAM_TO != ''  && secrets.TELEGRAM_BOT_TOKEN != ''
+      continue-on-error: true
+      uses: xinthink/action-telegram@v1.1
+      with:
+        chatId: ${{ secrets.TELEGRAM_TO }}
+        botToken: ${{ secrets.TELEGRAM_TOKEN }}
+        jobStatus: "Build Started"
+        skipSuccess: false
+
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
@@ -275,6 +286,16 @@ jobs:
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
 
+      # Send Build 'status' notification
+    - name: Telegram Notification
+      if:  ${{ success()  || cancelled() || failure() }} && (secrets.TELEGRAM_TO != '' && secrets.TELEGRAM_BOT_TOKEN != '')
+      continue-on-error: true
+      uses: xinthink/action-telegram@v1.1
+      with:
+        chatId: ${{ secrets.TELEGRAM_TO }}
+        botToken: ${{ secrets.TELEGRAM_TOKEN }}
+        jobStatus: ${{ job.status }}
+        skipSuccess: false
 
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
@@ -301,3 +322,4 @@ jobs:
         crave pull out/error.log
         echo "Displaying out/error.log"
         cat out/error.log
+        #if [[ -z "${{ secrets.CUSTOM_YAML }}" ]]; then

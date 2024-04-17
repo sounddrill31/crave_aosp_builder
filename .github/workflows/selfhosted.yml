@@ -187,6 +187,17 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
+      # Send Build 'start' notification
+    - name: Telegram Notification
+      if: ${{ success()}} && secrets.TELEGRAM_TO != ''  && secrets.TELEGRAM_BOT_TOKEN != ''
+      continue-on-error: true
+      uses: xinthink/action-telegram@v1.1
+      with:
+        chatId: ${{ secrets.TELEGRAM_TO }}
+        botToken: ${{ secrets.TELEGRAM_TOKEN }}
+        jobStatus: "Build Started"
+        skipSuccess: false
+
     - name: Cleanup
       run: rm -rf * # This cleans github actions workspace
 
@@ -348,8 +359,19 @@ jobs:
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      timeout-minutes: 720  
-      
+      timeout-minutes: 720
+
+      # Send Build 'status' notification
+    - name: Telegram Notification
+      if:  ${{ success()  || cancelled() || failure() }} && (secrets.TELEGRAM_TO != '' && secrets.TELEGRAM_BOT_TOKEN != '')
+      continue-on-error: true
+      uses: xinthink/action-telegram@v1.1
+      with:
+        chatId: ${{ secrets.TELEGRAM_TO }}
+        botToken: ${{ secrets.TELEGRAM_TOKEN }}
+        jobStatus: ${{ job.status }}
+        skipSuccess: false
+
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
       if: ${{ cancelled() }}
