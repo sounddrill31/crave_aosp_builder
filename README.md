@@ -64,6 +64,10 @@ This is the Authorization part of the crave.conf. It should not contain `:`, spa
 If this exists, the crave.yaml will be overridden while running the workflow
 ### EXTRA_FILES (Optional)
 If this exists, these files will be uploaded too. Remember to use relative path like out/target/product/devicename/file.something and seperate multiple files with spaces.
+### TELEGRAM_TOKEN (Optional)
+Bot token for telegram notifications
+### TELEGRAM_TO (Optional)
+Chat id for telegram notifications
 
 example:
 ```
