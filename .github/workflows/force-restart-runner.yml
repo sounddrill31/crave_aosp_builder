@@ -17,6 +17,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+      # Install 'tmux'
     - name: Set up environment
       run: |
         sudo apt-get update
@@ -39,6 +40,7 @@ jobs:
         CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
         CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
 
+      # Start 'runner' in 'tmux'.
     - name: Run crave devspace
       run: |
           crave devspace -- "tmux kill-session -t ghactions || true
