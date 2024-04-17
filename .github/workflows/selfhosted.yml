@@ -280,7 +280,7 @@ jobs:
           cp crave.conf $PROJECTFOLDER 
         fi
         if [[ -z "${{ secrets.CUSTOM_YAML }}" ]]; then
-          cp crave.yaml $PROJECTFOLDER/.repo/manifests
+          cp yamls/crave.yaml.aosp $PROJECTFOLDER/.repo/manifests
           echo "No Custom Configuration Found, Using Template!"
         else
           touch $PROJECTFOLDER/.repo/manifests/crave.yaml || true
