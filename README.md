@@ -62,8 +62,6 @@ This is the Authorization part of the crave.conf. It should not contain `:`, spa
 ![CRAVE_TOKEN](assets/cravetoken.png)
 ### CUSTOM_YAML (Optional)
 If this exists, the crave.yaml will be overridden while running the workflow
-### EXTRA_FILES (Optional)
-If this exists, these files will be uploaded too. Remember to use relative path like out/target/product/devicename/file.something and seperate multiple files with spaces.
 
 example:
 ```
@@ -78,6 +76,9 @@ LOS 20:
 LOS 21:
   ignoreClientHostname: true
 ```
+### EXTRA_FILES (Optional)
+If this exists, these files will be uploaded too. Remember to use relative path like out/target/product/devicename/file.something and seperate multiple files with spaces.
+
 For more info, read the documentation [here](https://foss.crave.io/docs/crave-usage/#location-of-the-craveyaml-file)
 ## Inputs Explanation
 ### Base Project
