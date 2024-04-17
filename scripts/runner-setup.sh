@@ -1,3 +1,6 @@
+# Copyright (C) 2024 Souhrud Reddy
+# SPDX-License-Identifier: Apache-2.0
+
 #!/bin/bash
 
 #Zip download
