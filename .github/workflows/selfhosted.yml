@@ -189,7 +189,6 @@ jobs:
     steps:
       # Send Build 'start' notification
     - name: Telegram Notification
-      if: ${{ success()}} && secrets.TELEGRAM_TO != ''  && secrets.TELEGRAM_BOT_TOKEN != ''
       continue-on-error: true
       uses: xinthink/action-telegram@v1.1
       with:
@@ -363,7 +362,7 @@ jobs:
 
       # Send Build 'status' notification
     - name: Telegram Notification
-      if:  ${{ success()  || cancelled() || failure() }} && (secrets.TELEGRAM_TO != '' && secrets.TELEGRAM_BOT_TOKEN != '')
+      if:  ${{ success()  || cancelled() || failure() }}
       continue-on-error: true
       uses: xinthink/action-telegram@v1.1
       with:
