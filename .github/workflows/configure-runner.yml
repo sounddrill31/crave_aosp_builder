@@ -9,10 +9,6 @@ name: Create Selfhosted Runner
 on:
   workflow_dispatch:
     inputs:
-        GITHUB_REPO:
-            description: 'Repository'
-            default: 'sounddrill31/crave_aosp_builder'
-            required: true
         RUNNER_TOKEN:
             description: 'This is the runner token, not PAT'
             required: true
@@ -59,4 +55,4 @@ jobs:
             echo "Runner token found"
         fi
         cd actions-runner
-         ./config.sh --unattended --url "https://github.com/${{ inputs.GITHUB_REPO }}" --token "${{ inputs.RUNNER_TOKEN }}""
+         ./config.sh --unattended --url "https://github.com/${{ github.repository }}" --token "${{ inputs.RUNNER_TOKEN }}""
