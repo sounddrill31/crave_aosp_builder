@@ -316,7 +316,10 @@ jobs:
           export BUILD_DIFFERENT_ROM="$REPO_INIT"
           echo "Building $BUILD_DIFFERENT_ROM"
         else
-          export BUILD_DIFFERENT_ROM="${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+          URL=$(echo "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" | grep -oP '(?<= -u )[^ ]+')
+          BRANCH=$(echo "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" | grep -oP '(?<= -b )[^ ]+')
+          export SCRIPT="rm rem-diff.sh; curl -O https://fileserver/rem-diff.sh; bash rem-diff.sh "$URL" "$BRANCH""
+          export BUILD_DIFFERENT_ROM="$SCRIPT; ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
           echo "Building $BUILD_DIFFERENT_ROM"
         fi
         echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
