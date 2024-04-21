@@ -318,7 +318,7 @@ jobs:
         else
           URL=$(echo "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" | grep -oP '(?<= -u )[^ ]+')
           BRANCH=$(echo "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" | grep -oP '(?<= -b )[^ ]+')
-          export SCRIPT="rm rem-diff.sh; curl -O https://fileserver/rem-diff.sh; bash rem-diff.sh "$URL" "$BRANCH""
+          export SCRIPT="rm rem-diff.sh; curl -O https://gist.githubusercontent.com/sounddrill31/a72eef2c3a495c16433ce8f653859a09/raw/1cabe5732c470fc76f30c23405ce546f9685cdb2/rem-diff.sh; bash rem-diff.sh "$URL" "$BRANCH""
           export BUILD_DIFFERENT_ROM="$SCRIPT; ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
           echo "Building $BUILD_DIFFERENT_ROM"
         fi
