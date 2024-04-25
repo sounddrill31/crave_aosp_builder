@@ -114,13 +114,17 @@ jobs:
       # Accept Project Variables
     - name: Set Repo Project
       run: |
+        PROJECTFOLDER: ${{ needs.prepare.outputs.PROJECTFOLDER }}
+        PROJECTID: ${{ needs.prepare.outputs.PROJECTID }}
+        REPO_INIT: ${{ needs.prepare.outputs.REPO_INIT }}
+
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
       env:
-        PROJECTFOLDER: ${{ steps.prepare.outputs.PROJECTFOLDER }}
-        PROJECTID: ${{ steps.prepare.outputs.PROJECTID }}
-        REPO_INIT: ${{ steps.prepare.outputs.REPO_INIT }}
+        PROJECTFOLDER: ${{ needs.prepare.outputs.PROJECTFOLDER }}
+        PROJECTID: ${{ needs.prepare.outputs.PROJECTID }}
+        REPO_INIT: ${{ needs.prepare.outputs.REPO_INIT }}
 
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
@@ -182,13 +186,17 @@ jobs:
       # Accept Project Variables
     - name: Set Project
       run: |
+        PROJECTFOLDER: ${{ needs.prepare.outputs.PROJECTFOLDER }}
+        PROJECTID: ${{ needs.prepare.outputs.PROJECTID }}
+        REPO_INIT: ${{ needs.prepare.outputs.REPO_INIT }}
+
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
       env:
-        PROJECTFOLDER: ${{ steps.prepare.outputs.PROJECTFOLDER }}
-        PROJECTID: ${{ steps.prepare.outputs.PROJECTID }}
-        REPO_INIT: ${{ steps.prepare.outputs.REPO_INIT }}
+        PROJECTFOLDER: ${{ needs.prepare.outputs.PROJECTFOLDER }}
+        PROJECTID: ${{ needs.prepare.outputs.PROJECTID }}
+        REPO_INIT: ${{ needs.prepare.outputs.REPO_INIT }}
 
       # Create a project folder
     - name: Create Project Folders
