@@ -157,9 +157,9 @@ jobs:
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
       env:
-        PROJECTFOLDER: ${{ steps.proj-variables.outputs.PROJECTFOLDER }}
-        PROJECTID: ${{ steps.proj-variables.outputs.PROJECTID }}
-        REPO_INIT: ${{ steps.proj-variables.outputs.REPO_INIT }}
+        PROJECTFOLDER: ${{ steps.prepare.outputs.PROJECTFOLDER }}
+        PROJECTID: ${{ steps.prepare.outputs.PROJECTID }}
+        REPO_INIT: ${{ steps.prepare.outputs.REPO_INIT }}
 
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
@@ -226,9 +226,9 @@ jobs:
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
       env:
-        PROJECTFOLDER: ${{ steps.proj-variables.outputs.PROJECTFOLDER }}
-        PROJECTID: ${{ steps.proj-variables.outputs.PROJECTID }}
-        REPO_INIT: ${{ steps.proj-variables.outputs.REPO_INIT }}
+        PROJECTFOLDER: ${{ steps.prepare.outputs.PROJECTFOLDER }}
+        PROJECTID: ${{ steps.prepare.outputs.PROJECTID }}
+        REPO_INIT: ${{ steps.prepare.outputs.REPO_INIT }}
 
       # Send Build 'start' notification
     - name: Telegram Notification
