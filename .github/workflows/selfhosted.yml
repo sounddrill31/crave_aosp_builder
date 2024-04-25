@@ -67,7 +67,7 @@ on:
         - 'no'
 
 jobs:
-  run-devspace-and-tmux:
+  Start-Runner:
     runs-on: ubuntu-latest
 
     steps:
@@ -106,6 +106,43 @@ jobs:
           tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
           echo "Runner Started"
         fi "
+  prepare:
+    name: Prepare for Building
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set Project variables
+      run: |
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
+        "ArrowOS 13.1")
+          export PROJECTFOLDER="/crave-devspaces/Arrow13"
+          export PROJECTID="73"
+          export REPO_INIT="repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1"
+
+        ;;
+        "DerpFest 13.0")
+          export PROJECTFOLDER="/crave-devspaces/DerpFest13"
+          export PROJECTID="64"
+          export REPO_INIT="repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1"
+        ;;
+        "LineageOS 21.0")
+          export PROJECTFOLDER="/crave-devspaces/Lineage21"
+          export PROJECTID="72"
+          export REPO_INIT="repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1"
+        ;;
+        "LineageOS 20.0")
+          export PROJECTFOLDER="/crave-devspaces/Lineage20"
+          export PROJECTID="36"
+          export REPO_INIT="repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1"
+        ;;
+        "CipherOS 14")
+          export PROJECTFOLDER="/crave-devspaces/Cipher14"
+          export PROJECTID="79"
+          export REPO_INIT="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
+        ;;
+        esac
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
+        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
+        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
 
   test:
     name: Test Local Manifests
@@ -145,39 +182,21 @@ jobs:
         mkdir tester
         cd tester 
         if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
-              case "${{ github.event.inputs.BASE_PROJECT }}" in
-                  "ArrowOS 13.1")
-                    repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1
-                  ;;
-                  "DerpFest 13.0")
-                    repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1
-                  ;;
-                  "LineageOS 21.0")
-                    repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
-                  ;;
-                  "LineageOS 20.0")
-                    repo init -u https://github.com/LineageOS/android.git -b lineage-20.0 --git-lfs --depth=1
-                  ;;
-                  "CipherOS 14")
-                    repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1
-                  ;;
-              esac
-             else
-                      ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
-                      
-              fi 
-              git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
+          $REPO_INIT
+        else
+          ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
+        fi 
+        git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
 
-              if [ ! $? == 0 ]; then \
-                curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
-                echo "Git clone failed, downloading through curl instead..."; \ 
-              fi \
+        if [ ! $? == 0 ]; then \
+          curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
+          echo "Git clone failed, downloading through curl instead..."; \ 
+        fi \
     
-              timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
-              du -csh .
-              rm -rf .repo
+        timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
+        du -csh . # Output Size when done
+        rm -rf .repo
       timeout-minutes: 10
-
 
   build:
     timeout-minutes: 720      
@@ -212,35 +231,6 @@ jobs:
         else
           echo "We are already running in devspace... Skipping Symlinks"
         fi
-        case "${{ github.event.inputs.BASE_PROJECT }}" in
-        "ArrowOS 13.1")
-          export PROJECTFOLDER="/crave-devspaces/Arrow13"
-          export PROJECTID="73"
-          export REPO_INIT="repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1"
-
-        ;;
-        "DerpFest 13.0")
-          export PROJECTFOLDER="/crave-devspaces/DerpFest13"
-          export PROJECTID="64"
-          export REPO_INIT="repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1"
-        ;;
-        "LineageOS 21.0")
-          export PROJECTFOLDER="/crave-devspaces/Lineage21"
-          export PROJECTID="72"
-          export REPO_INIT="repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1"
-        ;;
-        "LineageOS 20.0")
-          export PROJECTFOLDER="/crave-devspaces/Lineage20"
-          export PROJECTID="36"
-          export REPO_INIT="repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1"
-        ;;
-        "CipherOS 14")
-          export PROJECTFOLDER="/crave-devspaces/Cipher14"
-          export PROJECTID="79"
-          export REPO_INIT="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
-        ;;
-        esac
-
         if grep -q "$PROJECTFOLDER" <(crave clone list --json | jq -r '.clones[]."Cloned At"') && [ "${DCDEVSPACE}" == "1" ]; then
           crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
         else          
@@ -252,10 +242,8 @@ jobs:
         else
           mkdir $PROJECTFOLDER
         fi
-        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
-        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
+
         echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
-        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
         
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
@@ -320,7 +308,6 @@ jobs:
           echo "Building $BUILD_DIFFERENT_ROM"
         fi
         echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
-
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
