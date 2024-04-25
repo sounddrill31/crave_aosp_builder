@@ -113,6 +113,7 @@ jobs:
 
   test:
     name: Test Local Manifests
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
       # Accept Project Variables
