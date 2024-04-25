@@ -72,6 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set Project variables
+      id: proj-variables
       run: |
         case "${{ github.event.inputs.BASE_PROJECT }}" in
         "ArrowOS 13.1")
@@ -102,14 +103,25 @@ jobs:
         ;;
         esac
         echo "Building on ${{ github.event.inputs.BASE_PROJECT }} project"
-        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
-        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
-        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_OUTPUT"
+        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_OUTPUT"
+        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_OUTPUT"
 
   test:
     name: Test Local Manifests
     runs-on: ubuntu-latest
     steps:
+      # Accept Project Variables
+    - name: Set Repo Project
+      run: |
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
+        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
+        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
+      env:
+        PROJECTFOLDER: ${{ steps.proj-variables.outputs.PROJECTFOLDER }}
+        PROJECTID: ${{ steps.proj-variables.outputs.PROJECTID }}
+        REPO_INIT: ${{ steps.proj-variables.outputs.REPO_INIT }}
+
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
       run: |
@@ -167,9 +179,21 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
+      # Accept Project Variables
+    - name: Set Project
+      run: |
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
+        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
+        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
+      env:
+        PROJECTFOLDER: ${{ steps.proj-variables.outputs.PROJECTFOLDER }}
+        PROJECTID: ${{ steps.proj-variables.outputs.PROJECTID }}
+        REPO_INIT: ${{ steps.proj-variables.outputs.REPO_INIT }}
+
       # Create a project folder
     - name: Create Project Folders
       run: |
+
         if [ "${DCDEVSPACE}" != "1" ]; then
           echo "Symlinking devspace folder"
           mkdir -p devspace
