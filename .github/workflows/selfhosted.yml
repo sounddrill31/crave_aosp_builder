@@ -21,6 +21,9 @@ on:
           - 'ArrowOS 13.1'
           - 'DerpFest 13.0'
           - 'CipherOS 14'
+          - 'PixelOS 14'
+          - 'LineageOS 16.0'
+          - 'CyanogenMOD 14.1'
       BUILD_DIFFERENT_ROM:
         description: "Command to initialize a different 'repo' project:"
         required: false
@@ -139,6 +142,21 @@ jobs:
           export PROJECTFOLDER="/crave-devspaces/Cipher14"
           export PROJECTID="79"
           export REPO_INIT="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
+        ;;
+        "PixelOS 14")
+          export PROJECTFOLDER="/crave-devspaces/Pixel14"
+          export PROJECTID="82"
+          export REPO_INIT="repo init -u https://github.com/PixelOS-AOSP/manifest.git -b fourteen --git-lfs --depth=1"
+        ;;
+        "LineageOS 16.0")
+          export PROJECTFOLDER="/crave-devspaces/Lineage16"
+          export PROJECTID="81"
+          export REPO_INIT="repo init -u https://github.com/accupara/los16.git -b lineage-16.0 --git-lfs --depth=1"
+        ;;
+        "CyanogenMOD 14.1")
+          export PROJECTFOLDER="/crave-devspaces/Cyanogen14"
+          export PROJECTID="83"
+          export REPO_INIT="repo init -u https://github.com/accupara/los-cm14.1.git -b cm-14.1 --git-lfs --depth=1"
         ;;
         esac
         echo "Building on ${{ github.event.inputs.BASE_PROJECT }} project"
