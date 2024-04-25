@@ -191,9 +191,6 @@ jobs:
           mkdir $PROJECTFOLDER
         fi
 
-        echo "OLDDIR=$(pwd)" >> "$GITHUB_ENV"
-
-
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
       uses: actions/checkout@v4
