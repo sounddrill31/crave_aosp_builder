@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Crave Builder
+name: TWRP Builder
 on:
   workflow_dispatch:
     # Various inputs to simplify usage of workflow.
