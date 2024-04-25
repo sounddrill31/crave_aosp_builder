@@ -183,6 +183,7 @@ jobs:
 
   build:
     name: Build using foss.crave.io
+    needs: test 
       # Change this to self-hosted after setting up devspace as github actions runner
     runs-on: ubuntu-latest
     concurrency:
