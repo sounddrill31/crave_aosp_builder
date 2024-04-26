@@ -84,9 +84,9 @@ If this exists, these files will be uploaded too. Remember to use relative path 
 Bot token for telegram notifications
 ### TELEGRAM_TO (Optional)
 Chat id for telegram notifications
-### TG_UPLOAD_LIMIT
+### TG_UPLOAD_LIMIT (Optional)
 Custom Upload limit for telegram-upload. Default is 2147483648
-### GH_UPLOAD_LIMIT
+### GH_UPLOAD_LIMIT (Optional)
 Custom Upload limit for github releases. Default is 2147483648
 
 ## Inputs Explanation
