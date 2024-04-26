@@ -422,7 +422,7 @@ jobs:
 
         if [[ -n "${{ secrets.GH_UPLOAD_LIMIT }}" ]]; then
           export GH_UPLOAD_LIMIT="${{ secrets.GH_UPLOAD_LIMIT }}"
-          echo "Custom Upload unit found, using ${{ secrets.GH_UPLOAD_LIMIT }}!"
+          echo "Custom Upload unit found, using $GH_UPLOAD_LIMIT!"
         else
           echo "Custom Upload unit not found, using default!"
         fi
@@ -449,7 +449,7 @@ jobs:
 
         if [[ -n "${{ secrets.TG_UPLOAD_LIMIT }}" ]]; then
           export TG_UPLOAD_LIMIT="${{ secrets.TG_UPLOAD_LIMIT }}"
-          echo "Custom Upload unit found, using ${{ secrets.TG_UPLOAD_LIMIT }}!"
+          echo "Custom Upload unit found, using $TG_UPLOAD_LIMIT!"
         else
           echo "Custom Upload unit not found, using default!"
         fi
