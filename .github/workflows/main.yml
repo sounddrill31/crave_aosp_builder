@@ -133,7 +133,6 @@ jobs:
     name: Test Local Manifests
     needs: prepare
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
     steps:
       # Accept Project Variables
     - name: Set Repo Project
@@ -174,6 +173,7 @@ jobs:
 
       # Test Your Personal 'Local Manifests' against The ROM
     - name: Test Local Manifests
+      if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
       run: |
         rm -rf tester
         mkdir tester
