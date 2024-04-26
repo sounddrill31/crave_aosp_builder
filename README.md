@@ -84,6 +84,11 @@ If this exists, these files will be uploaded too. Remember to use relative path 
 Bot token for telegram notifications
 ### TELEGRAM_TO (Optional)
 Chat id for telegram notifications
+### TG_UPLOAD_LIMIT
+Custom Upload limit for telegram-upload. Default is 2147483648
+### GH_UPLOAD_LIMIT
+Custom Upload limit for github releases. Default is 2147483648
+
 ## Inputs Explanation
 ### Base Project
     - These are the projects everyone can build, with a foss.crave.io account
