@@ -244,7 +244,7 @@ jobs:
     needs: test 
     runs-on: self-hosted
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.action_repository }}
     steps:
       # Accept Project Variables
     - name: Set Repo Project
