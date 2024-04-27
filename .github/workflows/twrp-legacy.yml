@@ -294,32 +294,25 @@ jobs:
       if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
       run: |
         cd $PROJECTFOLDER
-
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="clean"
         fi
-
         crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} ;
         # Clone local_manifests repository
-        $BUILD_DIFFERENT_ROM ;
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests ;
-
+        $BUILD_DIFFERENT_ROM ;
         if [ ! $? == 0 ]; then 
           curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }};
           echo "Git clone failed, downloading through curl instead...";
         fi 
-
         # Sync the repositories
         /opt/crave/resync.sh  ;
-
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ;
         export BUILD_HOSTNAME=crave ;
         source build/envsetup.sh ;
-
         echo "Repository: ${{ github.repository }}";
         echo "Run ID: ${{ github.run_id }}";
-
         # Build the ROM
         lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} ;
         make installclean ;
