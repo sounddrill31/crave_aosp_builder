@@ -205,7 +205,7 @@ jobs:
       # Change this to self-hosted after setting up devspace as github actions runner
     runs-on: ubuntu-latest
     concurrency:
-      group: ${{ github.action_repository }}
+      group: ${{ github.actor }}
     steps:
       # Accept Project Variables
     - name: Set Repo Project
