@@ -48,7 +48,7 @@ jobs:
     - name: Run crave devspace
       run: |
         crave devspace -- "rm -rf actions-runner || true
-        curl https://raw.githubusercontent.com/sounddrill31/crave_aosp_builder/main/scripts/runner-setup.sh | bash
+        curl https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/scripts/runner-setup.sh | bash
         if [[ "${{ inputs.RUNNER_TOKEN }}" == "github_pat_*" ]]; then
           echo "PAT does not work!"
         else
