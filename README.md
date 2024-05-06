@@ -46,6 +46,7 @@ Ensure you have no random spaces before or after
 
 - Start the workflow
 - After this is done, you are ready to build! Go to the "Crave Builder(self-hosted)" workflow and start building
+
 (If the runner is offline still, trigger "Start/Restart Selfhosted Runner" workflow to force-restart the selfhosted runner)
 
 ## Required Secrets
