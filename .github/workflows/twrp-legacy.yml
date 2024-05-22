@@ -31,7 +31,7 @@ on:
       LOCAL_MANIFEST_BRANCH:
         description: "Personal local manifest's branch:"
         required: false
-        default: 'lineage-oxygen'
+        default: 'twrp-oxygen-12.1'
       DEVICE_NAME:
         description: "Device's codename:"
         required: true
@@ -39,11 +39,11 @@ on:
       PRODUCT_NAME:
         description: "Product to build:"
         required: true
-        default: "lineage_oxygen"
+        default: "twrp_oxygen"
       BUILD_COMMAND:
         description: 'Command to be used for compiling:'
         required: true
-        default: 'make recoveryimage'
+        default: 'make recoveryimage -j\$(nproc --all)'
       BUILD_TYPE:
         description: 'Type of build:'
         required: true
