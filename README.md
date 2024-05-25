@@ -134,7 +134,7 @@ Custom Upload limit for github releases. Default is 2147483648
 ## FAQs:
 Q1. What is this Crave.io? How do I get an account?
 
-A. Crave.io is a build accelerator capable of cutting down build time by quite a bit. They are providing free build servers. However, self signup is disabled. 
+A. Crave.io is a build accelerator capable of cutting down build time by quite a bit. They are providing free build servers, however: self signup is disabled. 
 
 Please contact either `uvatbc`(`yuvraaj` on telegram) or me on discord/telegram.
 
