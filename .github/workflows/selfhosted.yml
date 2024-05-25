@@ -374,7 +374,7 @@ jobs:
         $BUILD_DIFFERENT_ROM ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
 
-        if [ ! $? == 0 ]; then \
+        if [ ! \$? == 0 ]; then \
           curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
           echo "Git clone failed, downloading through curl instead..."; \
         fi \
