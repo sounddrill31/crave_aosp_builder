@@ -130,3 +130,20 @@ Custom Upload limit for github releases. Default is 2147483648
   - [My Manifest tester](https://github.com/sounddrill31/Manifest_Tester) (credits to [AmogOS](https://github.com/AmogOS-Rom) project for original logic)
   - [Other contributors](https://github.com/sounddrill31/crave_aosp_builder/graphs/contributors)
   - [The crave team](https://github.com/accupara) for the build servers and helping us out when we get stuck
+
+## FAQs:
+Q1. What is this Crave.io? How do I get an account?
+A. Crave.io is a build accelerator capable of cutting down build time by quite a bit. They are providing free build servers. However, self signup is disabled. 
+Please contact either `uvatbc`(`yuvraaj` on telegram) or me on discord/telegram.
+Remember to share the following:
+- Name
+- Email
+- Git profile(preferably with your device sources or stuff you're proud of)    
+
+Q2. Hey, I get an error with this repository! Whom do i ask?
+A. Please feel free to contact me through the [crave.io discord](https://discord.crave.io) or [ROM Builders telegram](https://t.me/ROM_builders). My username is `sounddrill`
+
+Q3. This doesn't support XXnewrom2024XX! How do I build it?
+A. [Read this](#repo-init-command)
+
+Here, we enter our repo init command for a non-supported ROM. If we are building something that's supported by crave, we can leave the default as is.
