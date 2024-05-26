@@ -365,7 +365,7 @@ jobs:
 
         dir_path=".android-certs"
 
-        if [ -d "$dir_path" && "${{  secrets.SIGNING_PREFERENCE  }}" == "true" ]; then
+        if [ -d "$dir_path" && "${{  secrets.SIGNING_PREFERENCE  }}" != "false" ]; then
           echo "Keys provided, setting them up"
 
           find $dir_path/ -type f | while read filename; do
@@ -401,6 +401,7 @@ jobs:
         /opt/crave/resync.sh  && \
 
         # Configure Signing Certificates
+        export SIGNING_PREFERENCE=${{  secrets.SIGNING_PREFERENCE  }}; \
         /opt/crave/certificate-setup.sh; \
         
         # Set up build environment
