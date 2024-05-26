@@ -154,3 +154,14 @@ Q3. This doesn't support XXnewrom2024XX! How do I build it?
 A. [Read this](#repo-init-command)
 
 Here, we enter our repo init command for a non-supported ROM. If we are building something that's supported by crave, we can leave the default as is.
+
+Q4. How do I sign my builds?
+
+A. Build signing is only available on Self Hosted workflow, and only when you use Devspace CLI as the Self Hosted Runner.  
+
+Follow [this](placeholder) guide to generate certificates. 
+
+Create a secret called SIGNING_PREFERENCE
+
+Go to your devspace CLI instance through VSCode RAS, drag and drop your certificatesin .android-certs folder. 
+

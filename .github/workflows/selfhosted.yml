@@ -358,6 +358,24 @@ jobs:
         fi
         echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
 
+      # Prepare 'keys' for build signing
+    - name: Setup Private Certificates
+      run: |
+        cd $PROJECTFOLDER
+
+        dir_path=".android-certs"
+
+        if [ -d "$dir_path" && "${{  secrets.SIGNING_PREFERENCE  }}" == "true" ]; then
+          echo "Keys provided, setting them up"
+
+          find $dir_path/ -type f | while read filename; do
+            echo "Processing $filename"
+            crave push "$filename" -d /tmp/src/android/"$filename"
+          done
+        else
+          echo "No Keys Provided, skipping signing"
+        fi
+
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
       if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
@@ -381,6 +399,9 @@ jobs:
         
         # Sync the repositories
         /opt/crave/resync.sh  && \
+
+        # Configure Signing Certificates
+        /opt/crave/certificate-setup.sh; \
         
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
