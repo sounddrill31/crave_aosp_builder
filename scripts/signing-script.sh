@@ -4,11 +4,9 @@
 # Needs testing!
 # Usage: 
 # (Part 1) Inside Devspace:
-#   crave ssh -- "mkdir /tmp/src/android/.android-certs";
-#    find .android-certs/ -type f | while read filename; do
-#     echo "Processing $filename"
-#     crave push "$filename" -d /tmp/src/android/"$filename"
-#    done
+# If our current devspace folder is /crave-devspaces/Lineage20, we make /crave-devspaces/private/Lineage20/.android-certs with our certificates 
+# curl https://raw.githubusercontent.com/sounddrill31/crave_aosp_builder/signing/scripts/signing-script.sh | bash
+
 
 # (Part 2) Inside crave run command, before building section:
 # export SIGNING_PREFERENCE=true
@@ -18,22 +16,44 @@
 
 # Define the directory path
 dir_path=".android-certs"
+#KEYS_DIR="../private/$(basename "$PWD")"
+KEYS_DIR=$(realpath "../private/$(basename "$PWD")")
+
+# Check if we're running in devspace CLI or not
+if [ "${DCDEVSPACE}" == "1" ]; then
+
+# Check if keys exist in the path. If they do, copy them to project folder
+  if [ -d "../private/$(basename "$PWD")" ]; then
+    echo "Keys found at ${KEYS_DIR}, copying to temporary project folder"
+    cp -R $KEYS_DIR/* $dir_path
+    crave push .android-certs -d /tmp/src/android/
+  else
+    echo "No Keys found. Please ensure they exist inside ${KEYS_DIR}"
+    exit 0;
+  fi
+
+else # For when we're not running in devspace CLI
 
 # Read Signing Preference from Environmental Variables and set a default if it is blank
 
-: ${SIGNING_PREFERENCE:=false}
-echo "Signing Preference: $SIGNING_PREFERENCE"
+  : ${SIGNING_PREFERENCE:=false}
+  echo "Signing Preference: $SIGNING_PREFERENCE"
 
 # Check if the directory exists
-if [ -d "$dir_path" && ${{SIGNING_PREFERENCE}} != "false" ]; then
-  echo "Keys provided, setting them up"
-  mkdir -p vendor/extra
-  mkdir -p vendor/lineage-priv
-  cp -R .android-certs vendor/extra/keys
-  cp -R .android-certs vendor/lineage-priv/keys
-  echo "PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/extra/keys/releasekey" > vendor/extra/product.mk
-  echo "PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/lineage-priv/keys/releasekey" > vendor/lineage-priv/keys/keys.mk
+  if [ -d "$dir_path" && ${{SIGNING_PREFERENCE}} != "false" ]; then
+    echo "Keys provided, setting them up"
+    mkdir -p vendor/extra
+    mkdir -p vendor/lineage-priv
+
+# Copy certs
+    cp -R .android-certs vendor/extra/keys
+    cp -R .android-certs vendor/lineage-priv/keys
+
+# Create makefiles
+    echo "PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/extra/keys/releasekey" > vendor/extra/product.mk
+    echo "PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/lineage-priv/keys/releasekey" > vendor/lineage-priv/keys/keys.mk
   
+# Create BUILD.bazel
   echo "filegroup(
     name = \"android_certificate_directory\",
     srcs = glob([
@@ -42,8 +62,9 @@ if [ -d "$dir_path" && ${{SIGNING_PREFERENCE}} != "false" ]; then
     ]),
     visibility = [\"//visibility:public\"],
 )" > vendor/lineage-priv/keys/BUILD.bazel
-cp vendor/lineage-priv/keys/BUILD.bazel 
 
-else
-  echo "No Keys Provided, skipping signing"
+  else
+    echo "No Keys Provided, skipping signing"
+  fi
+
 fi
