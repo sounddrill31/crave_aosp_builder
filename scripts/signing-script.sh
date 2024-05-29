@@ -14,13 +14,13 @@
 
 #!/bin/bash
 
+# Check if we're running in devspace CLI or not
+if [ "${DCDEVSPACE}" == "1" ]; then
+
 # Define the directory path
 dir_path=".android-certs"
 #KEYS_DIR="../private/$(basename "$PWD")"
 KEYS_DIR=$(realpath "../private/$(basename "$PWD")")
-
-# Check if we're running in devspace CLI or not
-if [ "${DCDEVSPACE}" == "1" ]; then
 
 # Check if keys exist in the path. If they do, copy them to project folder
   if [ -d "../private/$(basename "$PWD")" ]; then
@@ -54,17 +54,9 @@ else # For when we're not running in devspace CLI
     echo "PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/lineage-priv/keys/releasekey" > vendor/lineage-priv/keys/keys.mk
   
 # Create BUILD.bazel
-  echo "filegroup(
-    name = \"android_certificate_directory\",
-    srcs = glob([
-        \"*.pk8\",
-        \"*.pem\",
-    ]),
-    visibility = [\"//visibility:public\"],
-)" > vendor/lineage-priv/keys/BUILD.bazel
-
+    curl -o vendor/lineage-priv/keys/BUILD.bazel https://raw.githubusercontent.com/sounddrill31/crave_aosp_builder/signing/configs/signing/BUILD.bazel
+    cat vendor/lineage-priv/keys/BUILD.bazel # For debugging, this doesn't contain any sensitive stuff
   else
     echo "No Keys Provided, skipping signing"
   fi
-
 fi
