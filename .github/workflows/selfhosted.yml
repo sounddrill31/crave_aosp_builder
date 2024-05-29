@@ -368,7 +368,12 @@ jobs:
     - name: Setup Private Certificates
       run: |
         cd $PROJECTFOLDER
-        bash ${{ github.workspace }}/scripts/signing-script.sh
+        if [[ -z "${{ secrets.SIGNING_PREFERENCE }}" ]]; then
+          echo "Signing Disabled!"
+        else
+          export SIGNING_PREFERENCE=""
+          bash ${{ github.workspace }}/scripts/signing-script.sh
+        fi
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
