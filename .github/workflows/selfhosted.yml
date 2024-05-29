@@ -370,8 +370,9 @@ jobs:
         cd $PROJECTFOLDER
 
         dir_path=".android-certs"
-
-        if [ -d "$dir_path" && "${{  secrets.SIGNING_PREFERENCE  }}" != "false" && "${DCDEVSPACE}" == "1" ]; then
+        SIGNING_PREFERENCE="${{  secrets.SIGNING_PREFERENCE  }}"
+        : ${SIGNING_PREFERENCE:=false}
+        if [ -d "$dir_path" ] && [ "${{  secrets.SIGNING_PREFERENCE  }}" != "false" ] && [ "${DCDEVSPACE}" == "1" ]; then
         echo "Keys provided, setting them up"
         bash ${{ github.workspace }}/scripts/signing-script.sh
         else
