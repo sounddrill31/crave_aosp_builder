@@ -371,13 +371,9 @@ jobs:
 
         dir_path=".android-certs"
 
-        if [ -d "$dir_path" && "${{  secrets.SIGNING_PREFERENCE  }}" != "false" ]; then
-          echo "Keys provided, setting them up"
-
-          find $dir_path/ -type f | while read filename; do
-            echo "Processing $filename"
-            crave push "$filename" -d /tmp/src/android/"$filename"
-          done
+        if [ -d "$dir_path" && "${{  secrets.SIGNING_PREFERENCE  }}" != "false" && "${DCDEVSPACE}" == "1" ]; then
+        echo "Keys provided, setting them up"
+        bash ${{ github.workspace }}/scripts/signing-script.sh
         else
           echo "No Keys Provided, skipping signing"
         fi
