@@ -368,14 +368,7 @@ jobs:
     - name: Setup Private Certificates
       run: |
         cd $PROJECTFOLDER
-
-        dir_path=".android-certs"
-        if [ -d "$dir_path" ] && [ "${{  secrets.SIGNING_PREFERENCE  }}" != "" ] && [ "${DCDEVSPACE}" == "1" ]; then
-        echo "Keys provided, setting them up"
         bash ${{ github.workspace }}/scripts/signing-script.sh
-        else
-          echo "No Keys Provided, skipping signing"
-        fi
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
