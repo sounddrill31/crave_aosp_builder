@@ -14,11 +14,16 @@
 
 #!/bin/bash
 
+# Define the directory path
+dir_path=".android-certs"
+
+# Read Signing Preference from Environmental Variables and set a default if it is blank
+  : ${SIGNING_PREFERENCE:=false}
+  echo "Signing Preference: $SIGNING_PREFERENCE"
+
 # Check if we're running in devspace CLI or not
 if [ "${DCDEVSPACE}" == "1" ]; then
 
-# Define the directory path
-dir_path=".android-certs"
 #KEYS_DIR="../private/$(basename "$PWD")"
 KEYS_DIR=$(realpath "../private/$(basename "$PWD")")
 
@@ -36,13 +41,8 @@ mkdir -p $dir_path
 
 else # For when we're not running in devspace CLI
 
-# Read Signing Preference from Environmental Variables and set a default if it is blank
-
-  : ${SIGNING_PREFERENCE:=false}
-  echo "Signing Preference: $SIGNING_PREFERENCE"
-
 # Check if the directory exists
-  if [ -d "$dir_path" && ${{SIGNING_PREFERENCE}} != "false" ]; then
+  if [ -d "$dir_path" ] && [ ${{SIGNING_PREFERENCE}} != "false" ]; then
     echo "Keys provided, setting them up"
     mkdir -p vendor/extra
     mkdir -p vendor/lineage-priv
