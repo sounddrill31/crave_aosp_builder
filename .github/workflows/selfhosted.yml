@@ -371,7 +371,6 @@ jobs:
         if [[ -z "${{ secrets.SIGNING_PREFERENCE }}" ]]; then
           echo "Signing Disabled!"
         else
-          export SIGNING_PREFERENCE=""
           bash ${{ github.workspace }}/scripts/signing-script.sh
         fi
 
@@ -401,8 +400,9 @@ jobs:
 
         # Configure Signing Certificates
         export SIGNING_PREFERENCE=${{  secrets.SIGNING_PREFERENCE  }}; \
-        /opt/crave/certificate-setup.sh; \
-        
+        #/opt/crave/certificate-setup.sh; \
+        curl https://raw.githubusercontent.com/sounddrill31/crave_aosp_builder/signing/scripts/signing-script.sh | bash; \
+
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
         export BUILD_HOSTNAME=crave ; \
