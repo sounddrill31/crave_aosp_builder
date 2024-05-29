@@ -22,6 +22,8 @@ dir_path=".android-certs"
 #KEYS_DIR="../private/$(basename "$PWD")"
 KEYS_DIR=$(realpath "../private/$(basename "$PWD")")
 
+mkdir -p $dir_path
+
 # Check if keys exist in the path. If they do, copy them to project folder
   if [ -d "../private/$(basename "$PWD")" ]; then
     echo "Keys found at ${KEYS_DIR}, copying to temporary project folder"
