@@ -159,7 +159,7 @@ Q4. How do I sign my builds?
 
 A. Build signing is only available on Self Hosted workflow, and only when you use Devspace CLI as the Self Hosted Runner.  
 
-Follow [this](placeholder) guide to generate certificates. 
+Follow [this](https://krishnayadav.xyz/blog/sign-a-custom-rom-build/) guide to generate certificates, but don't build or set a password since we won't be able to enter it while building.
 
 Create a secret called SIGNING_PREFERENCE
 
