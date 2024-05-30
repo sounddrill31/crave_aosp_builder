@@ -44,7 +44,7 @@ mkdir -p $dir_path
 else # For when we're not running in devspace CLI
 
 # Check if the directory exists
-  if [ -d "$dir_path" ] && [ ${{SIGNING_PREFERENCE}} != "false" ]; then
+  if [ -d "$dir_path" ] && [ $SIGNING_PREFERENCE != "false" ]; then
     echo "Keys provided, setting them up"
     mkdir -p vendor/extra
     mkdir -p vendor/lineage-priv
