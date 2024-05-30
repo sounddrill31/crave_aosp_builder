@@ -76,8 +76,8 @@ jobs:
         echo "Local Manifest: ${{ github.event.inputs.LOCAL_MANIFEST }}"
         echo "Local Manifest Branch: ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }}"
         echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
-        echo "Makefile Name: ${{ github.event.inputs.PRODUCT_NAME }}"
-        echo "Build Target: ${{ github.event.inputs.BUILD_COMMAND }}-${{ github.event.inputs.BUILD_TYPE }}"
+        echo "Lunch Target: ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}"
+        echo "Build Command: ${{ github.event.inputs.BUILD_COMMAND }}"
         echo "Clean Build: ${{ github.event.inputs.CLEAN_BUILD }}"
         echo "::endgroup::"
 
