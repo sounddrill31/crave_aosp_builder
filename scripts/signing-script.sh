@@ -14,6 +14,8 @@
 
 #!/bin/bash
 
+set -x
+
 # Define the directory path
 dir_path=".android-certs"
 
