@@ -86,6 +86,20 @@ jobs:
       PROJECTID: ${{ steps.proj-variables.outputs.PROJECTID }}
       REPO_INIT: ${{ steps.proj-variables.outputs.REPO_INIT }}
 
+    - name: Display Run Parameters # Credit to azwhikaru for this part
+      run: |
+        echo "::group::User Environment Variables"
+        echo "Base Project: ${{ github.event.inputs.BASE_PROJECT }}"
+        echo "Extra Repo Init: ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+        echo "Removals: ${{ github.event.inputs.REMOVALS }}"
+        echo "Local Manifest: ${{ github.event.inputs.LOCAL_MANIFEST }}"
+        echo "Local Manifest Branch: ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }}"
+        echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
+        echo "Makefile Name: ${{ github.event.inputs.PRODUCT_NAME }}"
+        echo "Build Target: ${{ github.event.inputs.BUILD_COMMAND }}-${{ github.event.inputs.BUILD_TYPE }}"
+        echo "Clean Build: ${{ github.event.inputs.CLEAN_BUILD }}"
+        echo "::endgroup::"
+
   test:
     name: Test Local Manifests
     needs: prepare
