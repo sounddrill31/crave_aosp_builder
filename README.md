@@ -132,6 +132,9 @@ Custom Upload limit for github releases. Default is 2147483648
   - [The crave team](https://github.com/accupara) for the build servers and helping us out when we get stuck
 
 ## FAQs:
+
+### Signup
+
 Q1. What is this Crave.io? How do I get an account?
 
 A. Crave.io is a build accelerator capable of cutting down build time by quite a bit. They are providing free build servers, however: self signup is disabled. 
@@ -144,13 +147,47 @@ Remember to share the following:
 - Git profile(preferably with your device sources or stuff you're proud of)    
 
 
+### Chat Help
 Q2. Hey, I get an error with this repository! Whom do i ask?
 
 A. Please feel free to contact me through the [crave.io discord](https://discord.crave.io) or [ROM Builders telegram](https://t.me/ROM_builders). My username is `sounddrill`
 
 
+### Unsupported ROMs
 Q3. This doesn't support XXnewrom2024XX! How do I build it?
 
 A. [Read this](#repo-init-command)
 
-Here, we enter our repo init command for a non-supported ROM. If we are building something that's supported by crave, we can leave the default as is.
+Here, we enter our repo init command for a non-supported ROM. If we are building something that's supported by crave, we can leave the default as is. 
+
+Doing this is not recommended and is known to be troublesome. However, it doesn't break any crave rules yet. 
+
+### Build Signing
+Q4. How do I sign my builds?
+
+A. Build signing can be done using Backblaze B2 Buckets to hold the private keys. 
+
+Follow [this](https://opendroid.pugzarecute.com/wiki/Crave_Signing) guide to generate, encrypt and upload your keys to Backblaze.
+
+Create a CUSTOM_YAML called crave.yaml with the correct credentials as your environment variables. 
+
+```
+LOS 21:
+  ignoreClientHostname: true
+  env:
+    BUCKET_NAME: your_bucket_name
+    KEY_ENCRYPTION_PASSWORD: your_key_encryption_password
+    BKEY_ID: your_bkey_id
+    BAPP_KEY: your_bapp_key
+```
+
+Replace "LOS 21" with your base project's name. Remember to use the correct name, get it from `crave clone list`.
+
+Also remember to replace the placeholder credentials with actual values.
+
+It is also recommended to set ignoreClientHostname to preserve workflow persistence. Read more about it [here](https://opendroid.pugzarecute.com/wiki/Crave_Devspace#workspace-persistence).
+
+Steps:
+- Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
+- Set repository secret called CUSTOM_YAML
+- Enter the contents of your crave.yaml 
