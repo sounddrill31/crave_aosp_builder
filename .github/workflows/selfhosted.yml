@@ -52,7 +52,7 @@ on:
         description: 'Command to be used for compiling:'
         required: true
         type: choice
-        filter:
+        options:
         - 'mka bacon'
         - 'mka target-files-package otatools; /opt/crave/crave_sign.sh'
         - 'Other (enter custom command)'
