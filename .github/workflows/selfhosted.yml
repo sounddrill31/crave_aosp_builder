@@ -51,6 +51,11 @@ on:
       BUILD_COMMAND:
         description: 'Command to be used for compiling:'
         required: true
+        type: choice
+        filter:
+        - 'mka bacon'
+        - 'mka target-files-package otatools; /opt/crave/crave_sign.sh'
+        - 'Other (enter custom command)'
         default: 'mka bacon'
       BUILD_TYPE:
         description: 'Type of build:'
