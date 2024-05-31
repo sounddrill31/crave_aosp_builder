@@ -169,7 +169,7 @@ A. Build signing can be done using Backblaze B2 Buckets to hold the private keys
 
 Follow [this](https://opendroid.pugzarecute.com/wiki/Crave_Signing) guide to generate, encrypt and upload your keys to Backblaze.
 
-Create a CUSTOM_YAML called crave.yaml with the correct credentials as your environment variables. 
+Create a actions secret called CUSTOM_YAML with the correct credentials as your environment variables. If this secret is set, the workflow will use this for crave.yaml, instead of the templates found in config/crave folder of this repository. 
 
 ```
 LOS 21:
@@ -190,7 +190,7 @@ It is also recommended to set ignoreClientHostname to preserve workflow persiste
 Steps:
 - Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
 - Set repository secret called CUSTOM_YAML
-- Enter the contents of your crave.yaml 
+- Enter the contents of your crave.yaml from above
 
 While building: 
 - Replace 'mka bacon' in the build command section of the workflow dispatch to:
