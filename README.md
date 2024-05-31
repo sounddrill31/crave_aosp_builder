@@ -191,3 +191,10 @@ Steps:
 - Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
 - Set repository secret called CUSTOM_YAML
 - Enter the contents of your crave.yaml 
+
+While building: 
+- Replace 'mka bacon' in the build command section of the workflow dispatch to:
+
+```
+mka target-files-package otatools; /opt/crave/crave_sign.sh
+```
