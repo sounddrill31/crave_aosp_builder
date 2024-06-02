@@ -105,8 +105,8 @@ Custom Upload limit for github releases. Default is 2147483648
 ### Local Manifest
     - Here you enter the git repo and branch for your local manifests, containing device specific repositories. These will be cloned to .repo/local_manifests
 ### Device Details
-    - Enter the device codename you want to build for inside DEVICE_NAME
-    - Enter the makefile name(without the .mk) inside MAKEFILE_NAME
+    - Enter the device codename you want to build for inside DEVICE_NAME, like "oxygen".
+    - Enter the device codename inside PRODUCT_NAME, to be inserted into the breakfast command. If you enter makefile name(without the .mk, like "lineage_oxygen"), it will fallback to using the lunch command. 
 ### Build Command
     - eg. m updatepackage, mka bacon, make recoveryimage
 ### Build Type
