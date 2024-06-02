@@ -10,6 +10,9 @@
 [stars-shield]: https://img.shields.io/github/stars/sounddrill31/crave_aosp_builder.svg?style=for-the-badge
 [stars-url]: https://github.com/sounddrill31/crave_aosp_builder/stargazers
 
+## Wiki
+While using this repo, please take a look at [the wiki](https://opendroid.pugzarecute.com/wiki) as well!
+
 ## Prerequisites 
 foss.crave.io account
 
