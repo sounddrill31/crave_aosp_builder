@@ -115,20 +115,6 @@ jobs:
     name: Prepare for Building
     runs-on: ubuntu-latest
     steps:
-    - name: Display Run Parameters # Credit to azwhikaru for this part
-      run: |
-        echo "::group::User Environment Variables"
-        echo "Base Project: ${{ github.event.inputs.BASE_PROJECT }}"
-        echo "Extra Repo Init: ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
-        echo "Removals: ${{ github.event.inputs.REMOVALS }}"
-        echo "Local Manifest: ${{ github.event.inputs.LOCAL_MANIFEST }}"
-        echo "Local Manifest Branch: ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }}"
-        echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
-        echo "Breakfast Target: ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }}"
-        echo "Build Command: ${{ github.event.inputs.BUILD_COMMAND }}"
-        echo "Clean Build: ${{ github.event.inputs.CLEAN_BUILD }}"
-        echo "::endgroup::"
-
     - name: Set Project variables
       id: proj-variables
       run: |
@@ -137,7 +123,6 @@ jobs:
           export PROJECTFOLDER="/crave-devspaces/Arrow13"
           export PROJECTID="73"
           export REPO_INIT="repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1"
-
         ;;
         "DerpFest 13.0")
           export PROJECTFOLDER="/crave-devspaces/DerpFest13"
@@ -185,14 +170,37 @@ jobs:
           export REPO_INIT="repo init -u https://github.com/accupara/los-cm14.1.git -b cm-14.1 --git-lfs --depth=1"
         ;;
         esac
+
+        if [[ ${{ github.event.inputs.PRODUCT_NAME }} == *_* ]]; then
+          LUNCH="lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}"
+        else
+          LUNCH="breakfast ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }}"
+        fi
+
         echo "Building on ${{ github.event.inputs.BASE_PROJECT }} project"
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_OUTPUT"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_OUTPUT"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_OUTPUT"
+        echo "LUNCH=$LUNCH" >> "$GITHUB_OUTPUT"
+
+    - name: Display Run Parameters # Credit to azwhikaru for this part
+      run: |
+        echo "::group::User Environment Variables"
+        echo "Base Project: ${{ github.event.inputs.BASE_PROJECT }}"
+        echo "Extra Repo Init: ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}"
+        echo "Removals: ${{ github.event.inputs.REMOVALS }}"
+        echo "Local Manifest: ${{ github.event.inputs.LOCAL_MANIFEST }}"
+        echo "Local Manifest Branch: ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }}"
+        echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
+        echo "Breakfast/Lunch Target: $LUNCH"
+        echo "Build Command: ${{ github.event.inputs.BUILD_COMMAND }}"
+        echo "Clean Build: ${{ github.event.inputs.CLEAN_BUILD }}"
+        echo "::endgroup::"
     outputs:
       PROJECTFOLDER: ${{ steps.proj-variables.outputs.PROJECTFOLDER }}
       PROJECTID: ${{ steps.proj-variables.outputs.PROJECTID }}
       REPO_INIT: ${{ steps.proj-variables.outputs.REPO_INIT }}
+      LUNCH: ${{ steps.proj-variables.outputs.LUNCH }}
 
   test:
     name: Test Local Manifests
@@ -205,10 +213,12 @@ jobs:
         PROJECTFOLDER="${{ needs.prepare.outputs.PROJECTFOLDER }}"
         PROJECTID="${{ needs.prepare.outputs.PROJECTID }}"
         REPO_INIT="${{ needs.prepare.outputs.REPO_INIT }}"
+        LUNCH="${{ needs.prepare.outputs.LUNCH }}"
 
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
+        echo "LUNCH=$LUNCH" >> "$GITHUB_ENV"
 
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
@@ -263,6 +273,7 @@ jobs:
       PROJECTFOLDER: ${{ needs.prepare.outputs.PROJECTFOLDER }}
       PROJECTID: ${{ needs.prepare.outputs.PROJECTID }}
       REPO_INIT: ${{ needs.prepare.outputs.REPO_INIT }}
+      LUNCH: ${{ needs.prepare.outputs.LUNCH }}
 
   build:
     timeout-minutes: 720      
@@ -278,10 +289,12 @@ jobs:
         PROJECTFOLDER="${{ needs.test.outputs.PROJECTFOLDER }}"
         PROJECTID="${{ needs.test.outputs.PROJECTID }}"
         REPO_INIT="${{ needs.test.outputs.REPO_INIT }}"
+        LUNCH="${{ needs.test.outputs.LUNCH }}"
 
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
+        echo "LUNCH=$LUNCH" >> "$GITHUB_ENV"
 
       # Send Build 'start' notification
     - name: Telegram Notification
@@ -383,6 +396,7 @@ jobs:
           echo "Building $BUILD_DIFFERENT_ROM"
         fi
         echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
+        echo "We will be building with $LUNCH"
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
@@ -417,7 +431,7 @@ jobs:
         echo "Run ID: ${{ github.run_id }}"; \
 
         # Build the ROM
-        breakfast ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }} && \
+        $LUNCH && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
       timeout-minutes: 720
