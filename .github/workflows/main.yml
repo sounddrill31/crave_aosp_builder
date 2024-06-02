@@ -142,6 +142,7 @@ jobs:
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_OUTPUT"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_OUTPUT"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_OUTPUT"
+        echo "LUNCH=$LUNCH" >> "$GITHUB_ENV"
         echo "LUNCH=$LUNCH" >> "$GITHUB_OUTPUT"
     - name: Display Run Parameters # Credit to azwhikaru for this part
       run: |
