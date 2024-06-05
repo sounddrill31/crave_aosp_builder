@@ -324,7 +324,7 @@ jobs:
         fi \
 
         # Sync the repositories
-        /opt/crave/resync.sh  && \
+        curl https://raw.githubusercontent.com/sounddrill31/docker-images/04449990912b9d7ee594193883740037f0ac80a7/aosp/common/resync.sh | bash && \
 
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
