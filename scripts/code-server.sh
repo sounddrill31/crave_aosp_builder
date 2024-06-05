@@ -17,6 +17,6 @@ else
 fi
 
 # Create a tmux window called "code-session" and run code-server inside it
-tmux new-session -AD -t "code-session"
+tmux new-session -AD -s "code-session"
 tmux send-keys -t "code-session" 'killall code-server ; code-server' Enter
 echo "Created code-session!"
