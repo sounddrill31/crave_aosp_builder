@@ -1,0 +1,3 @@
+#This is a template, modify as you like
+TWRP:
+  ignoreClientHostname: true #ignoreClientHostname is used to keep persistence by ignoring the client hostname

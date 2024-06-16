@@ -1,0 +1,48 @@
+#
+# Copyright (C) 2024 Antonino Scordino
+# Copyright (C) 2024 Souhrud Reddy
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+name: Start VSCode Session
+on:
+  workflow_dispatch:
+
+jobs:
+  run-devspace:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+      # Install 'tmux'
+    - name: Set up environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tmux
+
+      # Download and configure 'crave'.
+    - name: Configure the 'crave' environment
+      run: |
+        if [ "${DCDEVSPACE}" == "1" ]; then
+        echo 'No need to set up crave, we are already running in devspace!'
+        else
+          mkdir ${HOME}/bin/
+          curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
+          mv ${PWD}/crave ${HOME}/bin/
+          sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
+          envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
+          rm -rf ${PWD}/crave.conf.sample          
+        fi
+      env:
+        CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
+        CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
+
+      # Configure 'runner'
+    - name: Run crave devspace
+      run: |
+        crave ${{ secrets.CRAVE_FLAGS }} devspace -- "rm -rf actions-runner || true
+        curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/scripts/code-server.sh ;
+        bash code-server.sh"

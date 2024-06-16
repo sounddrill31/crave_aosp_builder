@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Crave Builder(self-hosted)
+name: TWRP Builder(Legacy)
 on:
   workflow_dispatch:
     # Various inputs to simplify usage of workflow.
@@ -13,19 +13,10 @@ on:
       BASE_PROJECT:
         description: 'Choose a base project:'
         required: true
-        default: 'LineageOS 20.0'
+        default: 'TWRP 12.1'
         type: choice
         options:
-          - 'LineageOS 20.0'
-          - 'LineageOS 21.0'
-          - 'ArrowOS 13.1'
-          - 'DerpFest 13.0'
-          - 'CipherOS 14'
-          - 'PixelOS 14'
-          - 'RisingOS 14'
-          - 'LineageOS 18.1'
-          - 'LineageOS 16.0'
-          - 'CyanogenMOD 14.1'
+          - 'TWRP 12.1'
       BUILD_DIFFERENT_ROM:
         description: "Command to initialize a different 'repo' project:"
         required: false
@@ -40,7 +31,7 @@ on:
       LOCAL_MANIFEST_BRANCH:
         description: "Personal local manifest's branch:"
         required: false
-        default: 'lineage-oxygen'
+        default: 'twrp-oxygen-12.1'
       DEVICE_NAME:
         description: "Device's codename:"
         required: true
@@ -48,11 +39,11 @@ on:
       PRODUCT_NAME:
         description: "Product to build:"
         required: true
-        default: "lineage_oxygen"
+        default: "twrp_oxygen"
       BUILD_COMMAND:
         description: 'Command to be used for compiling:'
         required: true
-        default: 'mka bacon'
+        default: 'make recoveryimage -j\$(nproc --all)'
       BUILD_TYPE:
         description: 'Type of build:'
         required: true
@@ -72,118 +63,10 @@ on:
         - 'no'
 
 jobs:
-  Start-Runner:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up environment
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y tmux
-
-      # Download and configure 'crave'.
-    - name: Configure the 'crave' environment
-      run: |
-        if [ "${DCDEVSPACE}" == "1" ]; then
-        echo 'No need to set up crave, we are already running in devspace!'
-        else
-          mkdir ${HOME}/bin/
-          curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
-          mv ${PWD}/crave ${HOME}/bin/
-          sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
-          envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
-          rm -rf ${PWD}/crave.conf.sample          
-        fi
-      env:
-        CRAVE_USERNAME: ${{  secrets.CRAVE_USERNAME  }}
-        CRAVE_TOKEN: ${{  secrets.CRAVE_TOKEN  }}
-
-    - name: Run crave devspace
-      run: |
-        crave ${{ secrets.CRAVE_FLAGS }} devspace -- "if tmux has-session -t ghactions; then 
-          echo "Runner is already Running" 
-        else 
-          tmux kill-session -t ghactions;
-          tmux new-session -d -s ghactions 
-          tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
-          echo "Runner Started"
-        fi "
   prepare:
     name: Prepare for Building
     runs-on: ubuntu-latest
     steps:
-    - name: Set Project variables
-      id: proj-variables
-      run: |
-        case "${{ github.event.inputs.BASE_PROJECT }}" in
-        "ArrowOS 13.1")
-          export PROJECTFOLDER="/crave-devspaces/Arrow13"
-          export PROJECTID="73"
-          export REPO_INIT="repo init -u https://github.com/ArrowOS/android_manifest.git -b arrow-13.1 --depth=1"
-        ;;
-        "DerpFest 13.0")
-          export PROJECTFOLDER="/crave-devspaces/DerpFest13"
-          export PROJECTID="64"
-          export REPO_INIT="repo init -u https://github.com/DerpFest-AOSP/manifest.git -b 13 --depth=1"
-        ;;
-        "LineageOS 21.0")
-          export PROJECTFOLDER="/crave-devspaces/Lineage21"
-          export PROJECTID="72"
-          export REPO_INIT="repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1"
-        ;;
-        "LineageOS 20.0")
-          export PROJECTFOLDER="/crave-devspaces/Lineage20"
-          export PROJECTID="36"
-          export REPO_INIT="repo init -u https://github.com/accupara/los20.git -b lineage-20.0 --git-lfs --depth=1"
-        ;;
-        "CipherOS 14")
-          export PROJECTFOLDER="/crave-devspaces/Cipher14"
-          export PROJECTID="79"
-          export REPO_INIT="repo init -u https://github.com/CipherOS/android_manifest.git -b fourteen --git-lfs --depth=1"
-        ;;
-        "PixelOS 14")
-          export PROJECTFOLDER="/crave-devspaces/Pixel14"
-          export PROJECTID="82"
-          export REPO_INIT="repo init -u https://github.com/PixelOS-AOSP/manifest.git -b fourteen --git-lfs --depth=1"
-        ;;
-        "RisingOS 14")
-          export PROJECTFOLDER="/crave-devspaces/Rising14"
-          export PROJECTID="86"
-          export REPO_INIT="repo init -u https://github.com/RisingTechOSS/android.git -b fourteen --git-lfs --depth=1"
-        ;;
-        "LineageOS 18.1")
-          export PROJECTFOLDER="/crave-devspaces/Lineage18"
-          export PROJECTID="85"
-          export REPO_INIT="repo init -u https://github.com/accupara/los18.1.git -b lineage-18.1 --git-lfs --depth=1"
-        ;;
-        "LineageOS 16.0")
-          export PROJECTFOLDER="/crave-devspaces/Lineage16"
-          export PROJECTID="81"
-          export REPO_INIT="repo init -u https://github.com/accupara/los16.git -b lineage-16.0 --git-lfs --depth=1"
-        ;;
-        "CyanogenMOD 14.1")
-          export PROJECTFOLDER="/crave-devspaces/Cyanogen14"
-          export PROJECTID="83"
-          export REPO_INIT="repo init -u https://github.com/accupara/los-cm14.1.git -b cm-14.1 --git-lfs --depth=1"
-        ;;
-        esac
-
-        if [[ ${{ github.event.inputs.PRODUCT_NAME }} == *_* ]]; then
-          LUNCH="lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}"
-        else
-          LUNCH="breakfast ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }}"
-        fi
-
-        echo "Building on ${{ github.event.inputs.BASE_PROJECT }} project"
-        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_OUTPUT"
-        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_OUTPUT"
-        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_OUTPUT"
-        echo "LUNCH=$LUNCH" >> "$GITHUB_ENV"
-        echo "LUNCH=$LUNCH" >> "$GITHUB_OUTPUT"
-
     - name: Display Run Parameters # Credit to azwhikaru for this part
       run: |
         echo "::group::User Environment Variables"
@@ -193,15 +76,29 @@ jobs:
         echo "Local Manifest: ${{ github.event.inputs.LOCAL_MANIFEST }}"
         echo "Local Manifest Branch: ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }}"
         echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
-        echo "Breakfast/Lunch Target: ${{ env.LUNCH }}"
+        echo "Lunch Target: ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }}"
         echo "Build Command: ${{ github.event.inputs.BUILD_COMMAND }}"
         echo "Clean Build: ${{ github.event.inputs.CLEAN_BUILD }}"
         echo "::endgroup::"
+
+    - name: Set Project variables
+      id: proj-variables
+      run: |
+        case "${{ github.event.inputs.BASE_PROJECT }}" in
+        "TWRP 12.1")
+          export PROJECTFOLDER="/crave-devspaces/TWRP12"
+          export PROJECTID="78"
+          export REPO_INIT="repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1 --depth=1"
+        ;;
+        esac
+        echo "Building on ${{ github.event.inputs.BASE_PROJECT }} project"
+        echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_OUTPUT"
+        echo "PROJECTID=$PROJECTID"  >> "$GITHUB_OUTPUT"
+        echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_OUTPUT"
     outputs:
       PROJECTFOLDER: ${{ steps.proj-variables.outputs.PROJECTFOLDER }}
       PROJECTID: ${{ steps.proj-variables.outputs.PROJECTID }}
       REPO_INIT: ${{ steps.proj-variables.outputs.REPO_INIT }}
-      LUNCH: ${{ steps.proj-variables.outputs.LUNCH }}
 
   test:
     name: Test Local Manifests
@@ -214,12 +111,10 @@ jobs:
         PROJECTFOLDER="${{ needs.prepare.outputs.PROJECTFOLDER }}"
         PROJECTID="${{ needs.prepare.outputs.PROJECTID }}"
         REPO_INIT="${{ needs.prepare.outputs.REPO_INIT }}"
-        LUNCH="${{ needs.prepare.outputs.LUNCH }}"
 
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
-        echo "LUNCH=$LUNCH" >> "$GITHUB_ENV"
 
       # Download and configure 'repo'.
     - name: Configure the 'repo' environment
@@ -274,15 +169,14 @@ jobs:
       PROJECTFOLDER: ${{ needs.prepare.outputs.PROJECTFOLDER }}
       PROJECTID: ${{ needs.prepare.outputs.PROJECTID }}
       REPO_INIT: ${{ needs.prepare.outputs.REPO_INIT }}
-      LUNCH: ${{ needs.prepare.outputs.LUNCH }}
 
   build:
-    timeout-minutes: 720      
     name: Build using foss.crave.io
     needs: test 
-    runs-on: self-hosted
+      # Change this to self-hosted after setting up devspace as github actions runner
+    runs-on: ubuntu-latest
     concurrency:
-      group: ${{ github.actor }}
+      group: ${{ github.actor }}-small
     steps:
       # Accept Project Variables
     - name: Set Repo Project
@@ -290,29 +184,15 @@ jobs:
         PROJECTFOLDER="${{ needs.test.outputs.PROJECTFOLDER }}"
         PROJECTID="${{ needs.test.outputs.PROJECTID }}"
         REPO_INIT="${{ needs.test.outputs.REPO_INIT }}"
-        LUNCH="${{ needs.test.outputs.LUNCH }}"
 
         echo "PROJECTFOLDER=$PROJECTFOLDER" >> "$GITHUB_ENV"
         echo "PROJECTID=$PROJECTID"  >> "$GITHUB_ENV"
         echo "REPO_INIT=$REPO_INIT" >> "$GITHUB_ENV"
-        echo "LUNCH=$LUNCH" >> "$GITHUB_ENV"
-
-      # Send Build 'start' notification
-    - name: Telegram Notification
-      continue-on-error: true
-      uses: xinthink/action-telegram@v1.1
-      with:
-        chatId: ${{ secrets.TELEGRAM_TO }}
-        botToken: ${{ secrets.TELEGRAM_TOKEN }}
-        jobStatus: "Build Started"
-        skipSuccess: false
-
-    - name: Cleanup
-      run: rm -rf * # This cleans github actions workspace
 
       # Create a project folder
     - name: Create Project Folders
       run: |
+
         if [ "${DCDEVSPACE}" != "1" ]; then
           echo "Symlinking devspace folder"
           mkdir -p devspace
@@ -333,7 +213,7 @@ jobs:
         else
           mkdir $PROJECTFOLDER
         fi
-        
+
       # Check-out in order to access the repository's files.
     - name: Check-out to repository
       uses: actions/checkout@v4
@@ -341,9 +221,28 @@ jobs:
       # Set-up a spearate directory for the device.
     - name: Set-up workspace environment
       run: |
-        cd $PROJECTFOLDER
         mkdir ${{ github.event.inputs.DEVICE_NAME }}
         cd ${{ github.event.inputs.DEVICE_NAME }}
+      continue-on-error: true
+
+      # Download and configure 'repo'.
+    - name: Configure the 'repo' environment
+      run: |
+        # Check if repo is already installed
+        if ! command -v repo >/dev/null 2>&1; then
+          echo "Repo not found. Installing now..."
+          # Create bin directory if it doesn't exist
+          mkdir -p ~/bin
+          # Download repo script
+          curl https://storage.googleapis.com/git-repo-downloads/repo >> ~/bin/repo
+          # Make repo script executable
+          chmod a+x ~/bin/repo
+          # Create symbolic link to /usr/bin/repo
+          sudo ln -sf "/home/$(whoami)/bin/repo" "/usr/bin/repo"
+          echo "Repo installation complete."
+        else
+          echo "Repo already installed."
+        fi
       continue-on-error: true
       
       # Generate 'git' credential in base of the workflow's author.
@@ -351,23 +250,33 @@ jobs:
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-      
+
+      # Send Build 'start' notification
+    - name: Telegram Notification
+      continue-on-error: true
+      uses: xinthink/action-telegram@v1.1
+      with:
+        chatId: ${{ secrets.TELEGRAM_TO }}
+        botToken: ${{ secrets.TELEGRAM_TOKEN }}
+        jobStatus: "Build Started"
+        skipSuccess: false
+
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
         mkdir -p $PROJECTFOLDER/.repo/manifests
         if [ "${DCDEVSPACE}" == "1" ]; then
-        echo 'No need to set up crave, we are already running in devspace!'
+          echo 'No need to set up crave, we are already running in devspace!'
         else
           curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --
           mv ${PWD}/crave ${HOME}/bin/
           sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave
           envsubst < ${PWD}/crave.conf.sample >> ${PWD}/crave.conf
-          rm -rf ${PWD}/crave.conf.sample       
-          cp crave.conf $PROJECTFOLDER 
+          rm -rf ${PWD}/crave.conf.sample
+          cp crave.conf $PROJECTFOLDER
         fi
         if [[ -z "${{ secrets.CUSTOM_YAML }}" ]]; then
-          cp configs/crave/crave.yaml.aosp $PROJECTFOLDER/.repo/manifests/crave.yaml
+          cp configs/crave/crave.yaml.twrp.legacy $PROJECTFOLDER/.repo/manifests/crave.yaml
           echo "No Custom Configuration Found, Using Template!"
         else
           touch $PROJECTFOLDER/.repo/manifests/crave.yaml || true
@@ -382,12 +291,8 @@ jobs:
     - name: Set the 'crave' project
       run: |
         cd $PROJECTFOLDER
-        if grep -q "$PROJECTFOLDER" <(crave clone list --json | jq -r '.clones[]."Cloned At"') && [ "${DCDEVSPACE}" == "1" ]; then
-          echo "Using Crave Clone... skipping"
-        else
-          echo "Running $REPO_INIT"
-          $REPO_INIT
-        fi
+        echo "Running $REPO_INIT"
+        $REPO_INIT
 
         if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
           export BUILD_DIFFERENT_ROM="$REPO_INIT"
@@ -397,20 +302,18 @@ jobs:
           echo "Building $BUILD_DIFFERENT_ROM"
         fi
         echo "BUILD_DIFFERENT_ROM=$BUILD_DIFFERENT_ROM" >> "$GITHUB_ENV"
-        echo "We will be building with $LUNCH"
 
       # Create a 'crave' job for building.
     - name: Start compilation through 'crave'
       if: ${{ github.event.inputs.BUILD_DIFFERENT_ROM != 'skip' }}
       run: |
         cd $PROJECTFOLDER
-        
-        jq '.projects = []' ~/crave.conf > tmp && mv tmp ~/crave.conf
+
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="clean"
         fi
 
-        crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
+        crave ${{ secrets.CRAVE_FLAGS }} run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         $BUILD_DIFFERENT_ROM ; \
         git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} .repo/local_manifests && \
@@ -419,10 +322,10 @@ jobs:
           curl -o .repo/local_manifests ${{ github.event.inputs.LOCAL_MANIFEST }}; \
           echo "Git clone failed, downloading through curl instead..."; \
         fi \
-        
+
         # Sync the repositories
         /opt/crave/resync.sh  && \
-        
+
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
         export BUILD_HOSTNAME=crave ; \
@@ -432,10 +335,9 @@ jobs:
         echo "Run ID: ${{ github.run_id }}"; \
 
         # Build the ROM
-        $LUNCH && \
+        lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }} && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      timeout-minutes: 720
 
       # Send Build 'status' notification
     - name: Telegram Notification
@@ -457,12 +359,11 @@ jobs:
 
       # Upload '.zip's and '.img's directly from 'crave' ssh.
     - name: Upload build artifact(s)
-      continue-on-error: true
       run: |
         cd $PROJECTFOLDER
         echo "${{ secrets.GITHUB_TOKEN }}" > token.txt
         crave push token.txt -d $(crave ssh -- pwd | grep -v Select | sed -s 's/\r//g')/
-        crave ssh -- "export GH_UPLOAD_LIMIT="${{ secrets.GH_UPLOAD_LIMIT }}"; bash /opt/crave/github-actions/upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}' '${{ secrets.EXTRA_FILES }}'"
+        crave ssh -- "bash /opt/crave/github-actions/upload.sh '${{ github.run_id }}' '${{ github.event.inputs.DEVICE_NAME }}'  '${{ github.repository }}' '${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}' '${{ secrets.EXTRA_FILES }}'"
 
       # Pull Errors and Display them
     - name: Display error.log
@@ -474,20 +375,4 @@ jobs:
         crave pull out/error.log
         echo "Displaying out/error.log"
         cat out/error.log
-
-      # Upload to Telegram
-    - name: Upload Using telegram-upload
-      run: |
-        cd $PROJECTFOLDER
-        crave ssh -- "export TG_UPLOAD_LIMIT="${{ secrets.TG_UPLOAD_LIMIT }}"; bash /opt/crave/telegram/upload.sh '${{ github.event.inputs.DEVICE_NAME }}' '${{ secrets.EXTRA_FILES }}'"
-      continue-on-error: true
-
-      # Remove 'crave' clone
-    - name: Destroy Crave Clone
-      if: ${{ always() }}
-      run: |
-        if grep -q "$PROJECTFOLDER" <(crave clone list --json | jq -r '.clones[]."Cloned At"') && [ "${DCDEVSPACE}" == "1" ]; then
-          crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
-        else          
-          rm -rf $PROJECTFOLDER || true
-        fi
+        #if [[ -z "${{ secrets.CUSTOM_YAML }}" ]]; then
