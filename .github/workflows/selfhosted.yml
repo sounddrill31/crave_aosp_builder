@@ -103,7 +103,7 @@ jobs:
 
     - name: Run crave devspace
       run: |
-        crave devspace -- "if tmux has-session -t ghactions; then 
+        crave ${{ secrets.CRAVE_FLAGS }} devspace -- "if tmux has-session -t ghactions; then 
           echo "Runner is already Running" 
         else 
           tmux kill-session -t ghactions;

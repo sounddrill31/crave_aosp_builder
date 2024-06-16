@@ -30,6 +30,11 @@ foss.crave.io account
 
 - Go to Settings -> Code and Automation -> Actions -> General
 - Set workflow Permissions to "Read and Write Permissions" and save.
+
+If this is greyed out and you're building from a Github Organization, 
+
+go to Organization settings -> Code, planning, and automation -> Actions -> General -> Workflow permissions, set it to "Read and Write Permissions" and save
+
 - Now you are ready to build! Go to "Crave Builder" workflow and start building
 ## Selfhosted Runners:
 These runners sit in crave devspace CLI or your personal server and run the workflow on there. Use this if you need to bypass the 6 hours timeout limit.
@@ -88,6 +93,8 @@ If this exists, these files will be uploaded too. Remember to use relative path 
 Bot token for telegram notifications
 ### TELEGRAM_TO (Optional)
 Chat id for telegram notifications
+### CRAVE_FLAGS (Optional)
+Extra flags for crave binary
 ### TG_UPLOAD_LIMIT (Optional)
 Custom Upload limit for telegram-upload. Default is 2147483648
 ### GH_UPLOAD_LIMIT (Optional)

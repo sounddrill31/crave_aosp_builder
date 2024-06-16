@@ -1,4 +1,14 @@
+# Copyright (C) 2024 Souhrud Reddy
+# SPDX-License-Identifier: Apache-2.0
+
 #!/bin/bash
+
+# Look for whether there's a supervisor configuration that has the code-server setup
+if [ -f /etc/supervisor/conf.d/vscode.conf ] ; then
+    sudo supervisorctl start vscode
+    # always succeed!
+    exit 0
+fi
 
 # Check if config file exists and contains the correct bind address, download it if not
 if [ ! -f ~/.config/code-server/config.yaml ] || ! grep -q "bind-addr: 0.0.0.0:5899" ~/.config/code-server/config.yaml; then

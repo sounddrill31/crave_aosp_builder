@@ -5,16 +5,12 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-name: Create Selfhosted Runner
+name: Start VSCode Session
 on:
   workflow_dispatch:
-    inputs:
-        RUNNER_TOKEN:
-            description: 'This is the runner token, not PAT'
-            required: true
-        
+
 jobs:
-  run-devspace-and-tmux:
+  run-devspace:
     runs-on: ubuntu-22.04
 
     steps:
@@ -48,11 +44,5 @@ jobs:
     - name: Run crave devspace
       run: |
         crave ${{ secrets.CRAVE_FLAGS }} devspace -- "rm -rf actions-runner || true
-        curl https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/scripts/runner-setup.sh | bash
-        if [[ "${{ inputs.RUNNER_TOKEN }}" == "github_pat_*" ]]; then
-          echo "PAT does not work!"
-        else
-            echo "Runner token found"
-        fi
-        cd actions-runner
-         ./config.sh --unattended --url "https://github.com/${{ github.repository }}" --token "${{ inputs.RUNNER_TOKEN }}""
+        curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/scripts/code-server.sh ;
+        bash code-server.sh"

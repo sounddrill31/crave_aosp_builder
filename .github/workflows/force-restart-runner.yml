@@ -43,7 +43,7 @@ jobs:
       # Start 'runner' in 'tmux'.
     - name: Run crave devspace
       run: |
-          crave devspace -- "tmux kill-session -t ghactions || true
+          crave ${{ secrets.CRAVE_FLAGS }} devspace -- "tmux kill-session -t ghactions || true
           tmux new-session -d -s ghactions 
           tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
           echo "Runner Started""

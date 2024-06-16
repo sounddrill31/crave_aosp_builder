@@ -11,6 +11,8 @@ LOS 21:
   ignoreClientHostname: true
 PixelOS:
   ignoreClientHostname: true
+Rising OS:
+  ignoreClientHostname: true
 LOS 16:
   ignoreClientHostname: true
 LOS CM 14.1:
