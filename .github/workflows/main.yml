@@ -40,11 +40,11 @@ on:
       LOCAL_MANIFEST_BRANCH:
         description: "Personal local manifest's branch:"
         required: false
-        default: 'lineage-21'
+        default: 'sweet-fourteen'
       DEVICE_NAME:
         description: "Device's codename:"
         required: true
-        default: "tissot"
+        default: "sweet"
       PRODUCT_NAME:
         description: "Product to build:"
         required: true
@@ -52,7 +52,7 @@ on:
       BUILD_COMMAND:
         description: 'Command to be used for compiling:'
         required: true
-        default: 'mka bacon'
+        default: 'mka space'
       BUILD_TYPE:
         description: 'Type of build:'
         required: true
