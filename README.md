@@ -18,7 +18,7 @@ foss.crave.io account
 
 ## Setup Instructions
 - Download crave.conf from API Keys of foss.crave.io dashboard
-- Fork this repo
+- Fork this repo(please avoid importing it, it hurts fork stats and makes it harder for you to update the repo to the latest version)
 - Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
 - Copy your username and authentication token from crave.conf
 ![Repository Secrets](assets/cravetoken.png)
