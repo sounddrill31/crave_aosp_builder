@@ -132,7 +132,7 @@ jobs:
           export REPO_INIT="repo init -u https://github.com/accupara/los-cm14.1.git -b cm-14.1 --git-lfs --depth=1"
         ;;
         esac
-        if [[ ${{ github.event.inputs.PRODUCT_NAME }} == *_* ]]; then
+        if [[ ${{ github.event.inputs.PRODUCT_NAME }} == *_* &&! (${{ github.event.inputs.PRODUCT_NAME }} == gsi_* || ${{ github.event.inputs.PRODUCT_NAME }} == sdk_*) ]]; then
           LUNCH="lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}"
         else
           LUNCH="breakfast ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }}"
