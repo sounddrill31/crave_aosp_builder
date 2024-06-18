@@ -16,9 +16,11 @@ While using this repo, please take a look at [the wiki](https://opendroid.pugzar
 ## Prerequisites 
 foss.crave.io account
 
+This workflow assumes you know basics of android building and github actions. Please read the Readme thoroughly before asking questions.
+
 ## Setup Instructions
 - Download crave.conf from API Keys of foss.crave.io dashboard
-- Fork this repo(please avoid importing it, it hurts fork stats and makes it harder for you to update the repo to the latest version)
+- Fork this repo(please avoid importing it via the import menu or manually copying the workflow file. This hurts fork stats and makes it harder for you to update the repo to the latest version)
 - Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
 - Copy your username and authentication token from crave.conf
 ![Repository Secrets](assets/cravetoken.png)
