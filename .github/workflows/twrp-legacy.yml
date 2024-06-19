@@ -81,6 +81,14 @@ jobs:
         echo "Clean Build: ${{ github.event.inputs.CLEAN_BUILD }}"
         echo "::endgroup::"
 
+        echo "Displaying Local Manifests"
+        if [[ -z "${{ secrets.DISPLAY_FALSE }}" ]]; then
+          git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{ github.event.inputs.LOCAL_MANIFEST_BRANCH }} local_manifests
+          cat local_manifests/*.xml
+        else
+          echo "Displaying is disabled through secrets."
+        fi
+
     - name: Set Project variables
       id: proj-variables
       run: |

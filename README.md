@@ -101,6 +101,8 @@ Extra flags for crave binary
 Custom Upload limit for telegram-upload. Default is 2147483648
 ### GH_UPLOAD_LIMIT (Optional)
 Custom Upload limit for github releases. Default is 2147483648
+### DISPLAY_FALSE (Optional)
+This workflow displays your local manifests by default. To disable this, create this secret with any data
 
 ## Inputs Explanation
 ### Base Project
