@@ -16,9 +16,11 @@ While using this repo, please take a look at [the wiki](https://opendroid.pugzar
 ## Prerequisites 
 foss.crave.io account
 
+This workflow assumes you know basics of android building and github actions. Please read the Readme thoroughly before asking questions.
+
 ## Setup Instructions
 - Download crave.conf from API Keys of foss.crave.io dashboard
-- Fork this repo
+- Fork this repo(please avoid importing it via the import menu or manually copying the workflow file. This hurts fork stats and makes it harder for you to update the repo to the latest version)
 - Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
 - Copy your username and authentication token from crave.conf
 ![Repository Secrets](assets/cravetoken.png)
@@ -99,6 +101,8 @@ Extra flags for crave binary
 Custom Upload limit for telegram-upload. Default is 2147483648
 ### GH_UPLOAD_LIMIT (Optional)
 Custom Upload limit for github releases. Default is 2147483648
+### DISPLAY_FALSE (Optional)
+This workflow displays your local manifests by default. To disable this, create this secret with any data
 
 ## Inputs Explanation
 ### Base Project
