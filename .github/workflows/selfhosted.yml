@@ -262,7 +262,7 @@ jobs:
         rm -rf tester
         mkdir tester
         cd tester 
-        if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
+        if [ -z "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" ||  "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
           $REPO_INIT
         else
           ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
@@ -397,7 +397,7 @@ jobs:
           $REPO_INIT
         fi
 
-        if [ "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
+        if [ -z "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" ||  "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]; then
           export BUILD_DIFFERENT_ROM="$REPO_INIT"
           echo "Building $BUILD_DIFFERENT_ROM"
         else
