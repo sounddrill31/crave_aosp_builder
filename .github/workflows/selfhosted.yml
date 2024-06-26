@@ -469,7 +469,7 @@ jobs:
           -d parse_mode="Markdown"
         }
 
-        send_telegram_message "Crave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has status: $status %0ACheck Progress at: %0Ahttps://github.com/${github.repository//_/\\_}/actions/runs/${{ github.run_id }}"
+        send_telegram_message "Crave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has status: $jobStatus %0ACheck Progress at: %0Ahttps://github.com/${github.repository//_/\\_}/actions/runs/${{ github.run_id }}"
         # Todo: error.log link
       env:
         chatId: ${{ secrets.TELEGRAM_TO }}
