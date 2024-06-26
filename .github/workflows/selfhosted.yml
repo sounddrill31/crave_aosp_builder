@@ -313,7 +313,7 @@ jobs:
           local message="$1"
           curl -s -X POST \
           https://api.telegram.org/bot$botToken/sendMessage \
-          -d chat_id=chatId \
+          -d chat_id=$chatId \
           -d text="$message" \
           -d parse_mode="Markdown"
         }
@@ -464,7 +464,7 @@ jobs:
           local message="$1"
           curl -s -X POST \
           https://api.telegram.org/bot$botToken/sendMessage \
-          -d chat_id=chatId \
+          -d chat_id=$chatId \
           -d text="$message" \
           -d parse_mode="Markdown"
         }
