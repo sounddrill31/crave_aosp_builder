@@ -17,7 +17,7 @@ if [ ! -f ~/.config/code-server/config.yaml ] || ! grep -q "bind-addr: 0.0.0.0:5
   if [[ $REPLY =~ ^[Yy]$ ]] || [[ $1 == "--quiet" ]]; then
     echo "Downloading..."
     rm ~/.config/code-server/config.yaml 2> /dev/null
-    curl -o ~/.config/code-server/config.yaml https://raw.githubusercontent.com/sounddrill31/crave_aosp_builder/main/configs/code-server/config.yaml
+    curl -o ~/.config/code-server/config.yaml https://raw.githubusercontent.com/${{ github.repository }}/main/configs/code-server/config.yaml
   else
     echo "Skipping..."
     exit 1
