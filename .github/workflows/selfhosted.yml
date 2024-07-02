@@ -343,7 +343,7 @@ jobs:
         if grep -q "$PROJECTFOLDER" <(crave clone list --json | jq -r '.clones[]."Cloned At"') && [ "${DCDEVSPACE}" == "1" ]; then
           crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
         else          
-        rm -rf $PROJECTFOLDER || true
+        echo "Skipping removal"
         fi
 
         if [ "${DCDEVSPACE}" == "1" ]; then
@@ -518,5 +518,5 @@ jobs:
         if grep -q "$PROJECTFOLDER" <(crave clone list --json | jq -r '.clones[]."Cloned At"') && [ "${DCDEVSPACE}" == "1" ]; then
           crave clone destroy -y $PROJECTFOLDER || echo "Error removing $PROJECTFOLDER"
         else          
-          rm -rf $PROJECTFOLDER || true
+          echo "Skipping removal"
         fi
