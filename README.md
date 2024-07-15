@@ -153,12 +153,7 @@ Q1. What is this Crave.io? How do I get an account?
 
 A. Crave.io is a build accelerator capable of cutting down build time by quite a bit. They are providing free build servers, however: self signup is disabled. 
 
-Please contact either `uvatbc`(`yuvraaj` on telegram) or me on discord/telegram.
-
-Remember to share the following:
-- Name
-- Email
-- Git profile(preferably with your device sources or stuff you're proud of)    
+Please fill out the [form](https://forms.gle/Jhvy9osvdmcS9B7fA) if you're looking for an account. for more info, check the [wiki](https://opendroid.pugzarecute.com/wiki/Crave_Devspace#getting-a-fosscraveiohttpsfosscraveio-account)
 
 
 ### Chat Help
