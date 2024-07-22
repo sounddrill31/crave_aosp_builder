@@ -132,10 +132,15 @@ jobs:
           export REPO_INIT="repo init -u https://github.com/accupara/los-cm14.1.git -b cm-14.1 --git-lfs --depth=1"
         ;;
         esac
-        if [[ ${{ github.event.inputs.PRODUCT_NAME }} == *_* &&! (${{ github.event.inputs.PRODUCT_NAME }} == gsi_* || ${{ github.event.inputs.PRODUCT_NAME }} == sdk_*) ]]; then
+
+        if [[ "${{ github.event.inputs.PRODUCT_NAME }}" == "*_*" &&! ("${{ github.event.inputs.PRODUCT_NAME }}" == "gsi_*" || "${{ github.event.inputs.PRODUCT_NAME }}" == "sdk_*") ]]; then
           LUNCH="lunch ${{ github.event.inputs.PRODUCT_NAME }}-${{ github.event.inputs.BUILD_TYPE }}"
         else
-          LUNCH="breakfast ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }}"
+          if  [[ "${{ github.event.inputs.BASE_PROJECT }}"  == "RisingOS 14" && "${{ github.event.inputs.BUILD_DIFFERENT_ROM }}" == "echo 'Build Starting!'" ]]; then
+            LUNCH="riseup ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }}"
+          else
+            LUNCH="breakfast ${{ github.event.inputs.PRODUCT_NAME }} ${{ github.event.inputs.BUILD_TYPE }}"
+          fi
         fi
 
         echo "Building on ${{ github.event.inputs.BASE_PROJECT }} project"
