@@ -371,7 +371,7 @@ jobs:
           -d parse_mode="Markdown"
         }
 
-        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has status: $jobStatus %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}%0ADownload at: https://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/releases/tag/${{ github.run_id }}"
+        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has Succeeded! %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}%0ADownload at: https://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/releases/tag/${{ github.run_id }}"
 
       env:
         chatId: ${{ secrets.TELEGRAM_TO }}
@@ -393,7 +393,13 @@ jobs:
           -d parse_mode="Markdown"
         }
 
-        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has status: $jobStatus %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}"
+        if [ "$jobStatus" = "cancelled" ]; then
+          jobMessage="has been Cancelled!"
+        elif [ "$jobStatus" = "failure" ]; then
+          jobMessage="has Failed!"
+        fi
+
+        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has status: $jobMessage %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}"
         # Todo: error.log link
       env:
         chatId: ${{ secrets.TELEGRAM_TO }}
