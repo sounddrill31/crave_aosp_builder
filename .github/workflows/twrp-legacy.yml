@@ -272,7 +272,7 @@ jobs:
           -d parse_mode="Markdown"
         }
 
-        send_telegram_message "Crave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has been queued %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}"
+        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has been queued %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}"
       env:
         chatId: ${{ secrets.TELEGRAM_TO }}
         botToken: ${{ secrets.TELEGRAM_TOKEN }}
@@ -357,9 +357,9 @@ jobs:
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
 
-      # Send Build 'status' notification
+      # Send Build 'status' notification (Success)
     - name: Telegram Notification
-      if:  ${{ success()  || cancelled() || failure() }}
+      if:  ${{ success() }}
       continue-on-error: true
       run: |
         send_telegram_message() {
@@ -371,13 +371,40 @@ jobs:
           -d parse_mode="Markdown"
         }
 
-        send_telegram_message "Crave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has status: $jobStatus %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}"
-        # Todo: error.log link
+        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has Succeeded! %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}%0ADownload at: https://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/releases/tag/${{ github.run_id }}"
+
       env:
         chatId: ${{ secrets.TELEGRAM_TO }}
         botToken: ${{ secrets.TELEGRAM_TOKEN }}
         jobStatus: ${{ job.status }}
         skipSuccess: false
+
+      # Send Build 'status' notification (Fail/Cancel)
+    - name: Telegram Notification
+      if:  ${{ cancelled() || failure() }}
+      continue-on-error: true
+      run: |
+        send_telegram_message() {
+          local message="$1"
+          curl -s -X POST \
+          https://api.telegram.org/bot$botToken/sendMessage \
+          -d chat_id=$chatId \
+          -d text="$message" \
+          -d parse_mode="Markdown"
+        }
+
+        if [ "$jobStatus" = "cancelled" ]; then
+          jobMessage="has been Cancelled!"
+        elif [ "$jobStatus" = "failure" ]; then
+          jobMessage="has Failed!"
+        fi
+
+        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has status: $jobMessage %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}"
+        # Todo: error.log link
+      env:
+        chatId: ${{ secrets.TELEGRAM_TO }}
+        botToken: ${{ secrets.TELEGRAM_TOKEN }}
+        jobStatus: ${{ job.status }}
 
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
