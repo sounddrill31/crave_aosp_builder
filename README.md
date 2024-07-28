@@ -106,44 +106,45 @@ This workflow displays your local manifests by default. To disable this, create 
 
 ## Inputs Explanation
 ### Base Project
-    - These are the projects everyone can build, with a foss.crave.io account
-    - These are the ones officially added
+- These are the projects everyone can build, with a foss.crave.io account
+- These are the ones officially added
 ### Repo init Command
-    - This is only for when you are initializing another ROM. When doing this, ensure you are initializing on top of closest cousin base project
-    - Don't initialize android 14 on top of android 13 projects
-    - If you just type 'skip', it will skip the compilation. This is useful for uploading and debugging
+- This is only for when you are initializing another ROM. When doing this, ensure you are initializing on top of closest cousin base project
+- Don't initialize android 14 on top of android 13 projects
+- If you just type 'skip', it will skip the compilation. This is useful for uploading and debugging
 ### Removals
-    - When we resync another ROM on top, we are bound to get "cannot checkout" errors. To fix this, we add that folder to the Removals tab
-    - Add a space after .repo/local_manifests and add these folders. Don't change if you don't need to
-    - Almost defunct now, since /opt/crave/resync.sh script on crave handles everything for us
+- When we resync another ROM on top, we are bound to get "cannot checkout" errors. To fix this, we add that folder to the Removals tab
+- Add a space after .repo/local_manifests and add these folders. Don't change if you don't need to
+- Almost defunct now, since /opt/crave/resync.sh script on crave handles everything for us
 ### Local Manifest
-    - Here you enter the git repo and branch for your local manifests, containing device specific repositories. These will be cloned to .repo/local_manifests
+- Here you enter the git repo and branch for your local manifests, containing device specific repositories. These will be cloned to .repo/local_manifests
 ### Device Details
-    - Enter the device codename you want to build for inside DEVICE_NAME, like "oxygen".
-    - Enter the device codename inside PRODUCT_NAME, to be inserted into the breakfast command. If you enter makefile name(without the .mk, like "lineage_oxygen"), it will fallback to using the lunch command. 
+- Enter the device codename you want to build for inside DEVICE_NAME, like "oxygen".
+- Enter the device codename inside PRODUCT_NAME, to be inserted into the breakfast command. If you enter makefile name(without the .mk, like "lineage_oxygen"), it will fallback to using the lunch command.
+- If the project is RisingOS and no changes have been made, breakfast becomes riseup. If makefile name is detected, it falls back to lunch 
 ### Build Command
-    - eg. m updatepackage, mka bacon, make recoveryimage
+- eg. m updatepackage, mka bacon, make recoveryimage
 ### Build Type
-    - Choose the build type
-- user:  Limited access; suited for production
+- Choose the build type
+    - user:  Limited access; suited for production
 
-- userdebug:  Like user but with root access and debug capability; very close to production performance
+    - userdebug:  Like user but with root access and debug capability; very close to production performance
 
-- eng:  Development configuration with faster build time; most suited for day-to-day development
+    - eng:  Development configuration with faster build time; most suited for day-to-day development
 ### Clean Build
-  - Uses fresh Base Project sources without any of your changes(use only for testing/debugging)
+- Uses fresh Base Project sources without any of your changes(use only for testing/debugging)
 
 ## Known Issues
-  - You Tell Me :)
+- You Tell Me :)
 ## Extra Info
-  - For scheduled builds, it's better to remove the workflow dispatch stuff, check [lineage_builder](https://github.com/a57y17lte-dev/lineage_builder) for reference.
-  - This Repo is a spiritual successor to azwhikaru's Action-TWRP-Builder
+- For scheduled builds, it's better to remove the workflow dispatch stuff, check [lineage_builder](https://github.com/a57y17lte-dev/lineage_builder) for reference.
+- This Repo is a spiritual successor to azwhikaru's Action-TWRP-Builder
 ## Credits!
-  - [AntoninoScordino](https://github.com/AntoninoScordino) for the recent rewrite
-  - [azwhikaru's Action-TWRP-Builder](https://github.com/azwhikaru/Action-TWRP-Builder) Which I used as reference
-  - [My Manifest tester](https://github.com/sounddrill31/Manifest_Tester) (credits to [AmogOS](https://github.com/AmogOS-Rom) project for original logic)
-  - [Other contributors](https://github.com/sounddrill31/crave_aosp_builder/graphs/contributors)
-  - [The crave team](https://github.com/accupara) for the build servers and helping us out when we get stuck
+- [AntoninoScordino](https://github.com/AntoninoScordino) for the recent rewrite
+- [azwhikaru's Action-TWRP-Builder](https://github.com/azwhikaru/Action-TWRP-Builder) Which I used as reference
+- [My Manifest tester](https://github.com/sounddrill31/Manifest_Tester) (credits to [AmogOS](https://github.com/AmogOS-Rom) project for original logic)
+- [Other contributors](https://github.com/sounddrill31/crave_aosp_builder/graphs/contributors)
+- [The crave team](https://github.com/accupara) for the build servers and helping us out when we get stuck
 
 ## FAQs:
 
