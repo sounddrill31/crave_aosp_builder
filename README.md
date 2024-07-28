@@ -32,10 +32,8 @@ This workflow assumes you know basics of android building and github actions. Pl
 
 - Go to Settings -> Code and Automation -> Actions -> General
 - Set workflow Permissions to "Read and Write Permissions" and save.
-
-If this is greyed out and you're building from a Github Organization, 
-
-go to Organization settings -> Code, planning, and automation -> Actions -> General -> Workflow permissions, set it to "Read and Write Permissions" and save
+    - If this permission is greyed out and you're building from a Github Organization,
+        - go to Organization settings -> Code, planning, and automation -> Actions -> General -> Workflow permissions, set it to "Read and Write Permissions" and save
 
 - Now you are ready to build! Go to "Crave Builder" workflow and start building
 ## Selfhosted Runners:
