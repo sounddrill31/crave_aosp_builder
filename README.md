@@ -120,6 +120,8 @@ This workflow displays your local manifests by default. To disable this, create 
 - Enter the device codename you want to build for inside DEVICE_NAME, like "oxygen".
 - Enter the device codename inside PRODUCT_NAME, to be inserted into the breakfast command. If you enter makefile name(without the .mk, like "lineage_oxygen"), it will fallback to using the lunch command.
 - If the project is RisingOS and no changes have been made, breakfast becomes riseup. If makefile name is detected, it falls back to lunch 
+- For devices with '_' (underscores) in the target, please report them [here](https://github.com/sounddrill31/crave_aosp_builder/discussions/44) so I can add support for them
+
 ### Build Command
 - eg. m updatepackage, mka bacon, make recoveryimage
 ### Build Type
