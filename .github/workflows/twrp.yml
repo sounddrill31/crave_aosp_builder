@@ -357,6 +357,10 @@ jobs:
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
 
+        echo "Build is queued! Please wait for your build to start."
+        echo "Check foss.crave.io Dashboard to see builds"
+        echo "Running build's log will show up here!"
+
       # Send Build 'status' notification (Success)
     - name: Telegram Notification
       if:  ${{ success() }}
