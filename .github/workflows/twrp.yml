@@ -67,6 +67,12 @@ jobs:
     name: Prepare for Building
     runs-on: ubuntu-latest
     steps:
+    - name: Check-out to repository
+      uses: actions/checkout@v4
+
+    - name: Check Credentials
+      run: bash scripts/env-checker.sh
+
     - name: Display Run Parameters # Credit to azwhikaru for this part
       run: |
         echo "::group::User Environment Variables"

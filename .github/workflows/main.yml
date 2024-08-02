@@ -76,6 +76,12 @@ jobs:
     name: Prepare for Building
     runs-on: ubuntu-latest
     steps:
+    - name: Check-out to repository
+      uses: actions/checkout@v4
+
+    - name: Check Credentials
+      run: bash scripts/env-checker.sh
+
     - name: Set Project variables
       id: proj-variables
       run: |
