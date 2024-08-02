@@ -36,11 +36,11 @@ on:
       LOCAL_MANIFEST:
         description: "Personal local manifest [repository or raw]:"
         required: true
-        default: 'https://github.com/sounddrill31/local_manifests'
+        default: 'https://github.com/sounddrill31/local_manifests_oxygen'
       LOCAL_MANIFEST_BRANCH:
         description: "Personal local manifest's branch:"
         required: false
-        default: 'lineage-oxygen'
+        default: 'lineage-21-qpr3'
       DEVICE_NAME:
         description: "Device's codename:"
         required: true
@@ -48,7 +48,7 @@ on:
       PRODUCT_NAME:
         description: "Product to build:"
         required: true
-        default: "lineage_oxygen"
+        default: "oxygen"
       BUILD_COMMAND:
         description: 'Command to be used for compiling:'
         required: true
