@@ -411,6 +411,11 @@ jobs:
            export CLEAN="clean"
         fi
 
+        echo "Build is queued! Please wait for your build to start."
+        echo "Check foss.crave.io Dashboard to see builds"
+        echo "Running build's log will show up here!"
+
+
         crave ${{ secrets.CRAVE_FLAGS }} run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         $BUILD_DIFFERENT_ROM ; \
@@ -436,10 +441,6 @@ jobs:
         $LUNCH && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-
-        echo "Build is queued! Please wait for your build to start."
-        echo "Check foss.crave.io Dashboard to see builds"
-        echo "Running build's log will show up here!"
 
       # Send Build 'status' notification (Success)
     - name: Telegram Notification
