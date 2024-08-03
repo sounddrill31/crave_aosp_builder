@@ -36,7 +36,7 @@ on:
       LOCAL_MANIFEST:
         description: "Personal local manifest [repository or raw]:"
         required: true
-        default: 'https://github.com/sounddrill31/local_manifests_oxygen'
+        default: 'https://github.com/iamrh1819/local_manifests_oxygen'
       LOCAL_MANIFEST_BRANCH:
         description: "Personal local manifest's branch:"
         required: false
@@ -293,9 +293,9 @@ jobs:
       LUNCH: ${{ needs.prepare.outputs.LUNCH }}
 
   build:
-    timeout-minutes: 960      
+    timeout-minutes: 1440
     name: Build using foss.crave.io
-    needs: test 
+    needs: test
     runs-on: self-hosted
     concurrency:
       group: ${{ github.actor }}
@@ -453,6 +453,7 @@ jobs:
         
         # Sync the repositories
         /opt/crave/resync.sh  && \
+        repo forall -c 'git lfs install && git lfs pull && git lfs checkout' && \
         
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
@@ -466,7 +467,7 @@ jobs:
         $LUNCH && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      timeout-minutes: 960
+      timeout-minutes: 1440
 
       # Send Build 'status' notification (Success)
     - name: Telegram Notification
