@@ -113,7 +113,6 @@ jobs:
         echo "LOCAL_MANIFEST=$LOCAL_MANIFEST" >> "$GITHUB_ENV"
         echo "LOCAL_MANIFEST=$LOCAL_MANIFEST" >> "$GITHUB_OUTPUT"
 
-        echo "Local Manifest Command: $LOCAL_MANIFEST"
         echo "Displaying Local Manifests"
           if [[ -z "${{ secrets.DISPLAY_FALSE }}" ]]; then
             $LOCAL_MANIFEST
