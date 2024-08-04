@@ -182,7 +182,7 @@ jobs:
         echo "Displaying Local Manifests"
         if [[ -z "${{ secrets.DISPLAY_FALSE }}" ]]; then
           $LOCAL_MANIFEST
-          cat local_manifests/*.xml
+          cat .repo/local_manifests/*.xml
         else
           echo "Displaying is disabled through secrets."
         fi
