@@ -252,7 +252,7 @@ jobs:
           ${{ github.event.inputs.BUILD_DIFFERENT_ROM }}
         fi 
 
-        $LOCAL_MANIFEST
+        bash -c "$LOCAL_MANIFEST"
 
         timeout 1m repo sync --force-sync || { exit_code=$?; [ $exit_code -eq 124 ] || (echo "Error: Process failed with exit code $exit_code"; exit $exit_code); }
         du -csh . # Output Size when done
@@ -432,7 +432,7 @@ jobs:
         crave ${{ secrets.CRAVE_FLAGS }} run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         $BUILD_DIFFERENT_ROM ; \
-        $LOCAL_MANIFEST && \
+        bash -c "$LOCAL_MANIFEST" && \
 
         # Sync the repositories
         /opt/crave/resync.sh  && \
