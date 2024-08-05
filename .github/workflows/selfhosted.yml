@@ -36,11 +36,11 @@ on:
       LOCAL_MANIFEST:
         description: "Personal local manifest [repository or raw]:"
         required: true
-        default: 'https://github.com/sounddrill31/local_manifests_oxygen'
+        default: 'https://github.com/iamrh1819/local_manifests'
       LOCAL_MANIFEST_BRANCH:
         description: "Personal local manifest's branch:"
         required: false
-        default: 'lineage-21-qpr3'
+        default: 'A13'
       DEVICE_NAME:
         description: "Device's codename:"
         required: true
@@ -190,7 +190,7 @@ jobs:
             export local_manifest_url="${local_manifest_url%/}"  # remove trailing slash if it exists
           export LOCAL_MANIFEST=$(mkdir -p .repo/local_manifests && rm -rf .repo/local_manifests/* || true && curl -o .repo/local_manifests/local_manifest.xml "${local_manifest_url}")     
           else
-            export LOCAL_MANIFEST="git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${github.event.inputs.LOCAL_MANIFEST_BRANCH} local_manifests"
+            export LOCAL_MANIFEST="git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{github.event.inputs.LOCAL_MANIFEST_BRANCH}} local_manifests"
           fi
 
         echo "Building on ${{ github.event.inputs.BASE_PROJECT }} project"
@@ -219,7 +219,7 @@ jobs:
         echo "Displaying Local Manifests"
         if [[ -z "${{ secrets.DISPLAY_FALSE }}" ]]; then
           $LOCAL_MANIFEST
-          cat .repo/local_manifests/*.xml
+          cat local_manifests/*.xml
         else
           echo "Displaying is disabled through secrets."
         fi
@@ -303,9 +303,9 @@ jobs:
       LOCAL_MANIFEST: "${{ needs.prepare.outputs.LOCAL_MANIFEST }}"
 
   build:
-    timeout-minutes: 960      
+    timeout-minutes: 1440
     name: Build using foss.crave.io
-    needs: test 
+    needs: test
     runs-on: self-hosted
     concurrency:
       group: ${{ github.actor }}
@@ -460,6 +460,7 @@ jobs:
         
         # Sync the repositories
         /opt/crave/resync.sh  && \
+        repo forall -c 'git lfs install && git lfs pull && git lfs checkout' && \
         
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
@@ -473,7 +474,7 @@ jobs:
         $LUNCH && \
         make installclean && \
         ${{ github.event.inputs.BUILD_COMMAND }}"
-      timeout-minutes: 960
+      timeout-minutes: 1440
 
       # Send Build 'status' notification (Success)
     - name: Telegram Notification
