@@ -456,7 +456,7 @@ jobs:
         crave run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         $BUILD_DIFFERENT_ROM ; \
-        bash -c "$LOCAL_MANIFEST" && \
+        $LOCAL_MANIFEST && \
         
         # Sync the repositories
         /opt/crave/resync.sh  && \
