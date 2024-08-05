@@ -103,7 +103,7 @@ jobs:
             export local_manifest_url="${local_manifest_url%/}"  # remove trailing slash if it exists
             export LOCAL_MANIFEST=$(mkdir -p .repo/local_manifests && rm -rf .repo/local_manifests/* || true && curl -o .repo/local_manifests/local_manifest.xml "${local_manifest_url}")
           else
-            export LOCAL_MANIFEST="git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{github.event.inputs.LOCAL_MANIFEST_BRANCH}} local_manifests"
+            export LOCAL_MANIFEST="git clone ${{ github.event.inputs.LOCAL_MANIFEST }} --depth 1 -b ${{github.event.inputs.LOCAL_MANIFEST_BRANCH}} .repo/local_manifests"
           fi
 
         echo "Building on ${{ github.event.inputs.BASE_PROJECT }} project"
