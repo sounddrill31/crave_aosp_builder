@@ -457,11 +457,10 @@ jobs:
         # Clone local_manifests repository
         $BUILD_DIFFERENT_ROM ; \
         $LOCAL_MANIFEST && \
-        
+
         # Sync the repositories
         /opt/crave/resync.sh  && \
-        repo forall -c 'git lfs install && git lfs pull && git lfs checkout' && \
-        
+
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
         export BUILD_HOSTNAME=crave ; \
