@@ -10,6 +10,10 @@
 [stars-shield]: https://img.shields.io/github/stars/sounddrill31/crave_aosp_builder.svg?style=for-the-badge
 [stars-url]: https://github.com/sounddrill31/crave_aosp_builder/stargazers
 
+Please avoid importing, or "kanging" this repository as it is frequently updated.
+
+This ensured you can easily update to the latest changes and also boosts my fork stats 😉
+
 ## Wiki
 While using this repo, please take a look at [the wiki](https://opendroid.pugzarecute.com/wiki) as well!
 
