@@ -272,7 +272,7 @@ jobs:
       # Change this to self-hosted after setting up devspace as github actions runner
     runs-on: ubuntu-latest
     concurrency:
-      group: ${{ github.actor }}
+      group: ${{ github.repository_owner }}
     steps:
       # Accept Project Variables
     - name: Set Repo Project
