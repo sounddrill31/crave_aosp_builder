@@ -308,7 +308,7 @@ jobs:
     needs: test
     runs-on: self-hosted
     concurrency:
-      group: ${{ github.actor }}
+      group: ${{ github.repository_owner }}
     steps:
       # Accept Project Variables
     - name: Set Repo Project
