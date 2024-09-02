@@ -352,6 +352,7 @@ jobs:
       # Create a project folder
     - name: Create Project Folders
       run: |
+        echo "DCDEVSPACE status: ${DCDEVSPACE}"
         if [[ "${DCDEVSPACE}" != "1" ]]; then
           echo "Symlinking devspace folder"
           mkdir -p devspace
