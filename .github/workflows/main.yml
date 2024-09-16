@@ -26,6 +26,7 @@ on:
           - 'LineageOS 18.1'
           - 'LineageOS 16.0'
           - 'CyanogenMOD 14.1'
+          - 'AOSP'
       BUILD_DIFFERENT_ROM:
         description: "Command to initialize a different 'repo' project:"
         required: false
@@ -136,6 +137,11 @@ jobs:
           export PROJECTFOLDER="/crave-devspaces/Cyanogen14"
           export PROJECTID="83"
           export REPO_INIT="repo init -u https://github.com/accupara/los-cm14.1.git -b cm-14.1 --git-lfs --depth=1"
+        ;;
+        "AOSP")
+          export PROJECTFOLDER="/crave-devspaces/AOSP"
+          export PROJECTID="35"
+          export REPO_INIT="repo init -u https://android.googlesource.com/platform/manifest.git -b master --git-lfs --depth=1"
         ;;
         esac
 
