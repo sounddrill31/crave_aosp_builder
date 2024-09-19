@@ -212,3 +212,11 @@ While building:
 ```
 mka target-files-package otatools; /opt/crave/crave_sign.sh
 ```
+
+
+# Where A52sMatriXX repository
+
+# Where A52sMatriXX 7.1
+			
+			
+ 
