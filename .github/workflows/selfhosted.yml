@@ -105,7 +105,16 @@ jobs:
 
     - name: Run crave devspace
       run: |
-        crave ${{ secrets.CRAVE_FLAGS }} devspace -- "if tmux has-session -t ghactions; then 
+        crave ${{ secrets.CRAVE_FLAGS }} devspace -- "echo "Looking for runner..."
+          # Look for whether there's a runner folder set up
+          if [ -f actions-runner/run.sh ] ; then
+            echo "Runner found! Restarting it..."
+          else
+            echo "Error! Runner not found!"
+            exit 1
+          fi
+
+        if tmux has-session -t ghactions; then 
           echo "Runner is already Running" 
         else 
           tmux kill-session -t ghactions;
