@@ -43,7 +43,7 @@ jobs:
       # Start 'runner' in 'tmux'.
     - name: Run crave devspace
       run: |
-          echo "Looking for runner..."
+          crave ${{ secrets.CRAVE_FLAGS }} devspace -- "echo "Looking for runner..."
           # Look for whether there's a runner folder set up
           if [ -f actions-runner/run.sh ] ; then
             echo "Runner found! Restarting it..."
@@ -52,7 +52,7 @@ jobs:
             exit 1
           fi
 
-          crave ${{ secrets.CRAVE_FLAGS }} devspace -- "tmux kill-session -t ghactions || true
+          tmux kill-session -t ghactions || true
           tmux new-session -d -s ghactions 
           tmux send-keys -t ghactions './actions-runner/run.sh' Enter 
           echo "Runner Started""
