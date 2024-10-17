@@ -212,3 +212,13 @@ While building:
 ```
 mka target-files-package otatools; /opt/crave/crave_sign.sh
 ```
+
+## Star History
+
+<a href="https://star-history.com/#sounddrill31/crave_aosp_builder&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sounddrill31/crave_aosp_builder&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sounddrill31/crave_aosp_builder&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sounddrill31/crave_aosp_builder&type=Date" />
+ </picture>
+</a>
