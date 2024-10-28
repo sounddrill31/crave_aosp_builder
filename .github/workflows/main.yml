@@ -428,7 +428,11 @@ jobs:
         cd $PROJECTFOLDER
 
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
-           export CLEAN="clean"
+           export CLEAN="--clean"
+        fi
+        
+        if [[ -n "${{ secrets.PAID }}" ]]; then
+           export PAID="--platform aosp-silver"
         fi
 
         echo "Build is queued! Please wait for your build to start."
@@ -436,7 +440,7 @@ jobs:
         echo "Running build's log will show up here!"
 
 
-        crave ${{ secrets.CRAVE_FLAGS }} run --no-patch --${CLEAN} "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
+        crave ${{ secrets.CRAVE_FLAGS }} run --no-patch ${PAID} ${CLEAN} -- "rm -rf .repo/local_manifests/ ${{ github.event.inputs.REMOVALS }} && \
         # Clone local_manifests repository
         $BUILD_DIFFERENT_ROM ; \
         $LOCAL_MANIFEST && \
