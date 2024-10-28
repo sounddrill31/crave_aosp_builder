@@ -430,7 +430,7 @@ jobs:
         if [ "${{ github.event.inputs.CLEAN_BUILD }}" == "yes" ]; then
            export CLEAN="--clean"
         fi
-        
+
         if [[ -n "${{ secrets.PAID }}" ]]; then
            export PAID="--platform aosp-silver"
         fi
