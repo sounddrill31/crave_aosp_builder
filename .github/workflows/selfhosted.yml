@@ -467,6 +467,7 @@ jobs:
         fi
 
         if [[ -n "${{ secrets.PAID }}" ]]; then
+           echo "Paid Build... Tokens will be consumed."
            export PAID="--platform aosp-silver"
         fi
 
