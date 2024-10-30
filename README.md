@@ -176,6 +176,17 @@ Here, we enter our repo init command for a non-supported ROM. If we are building
 
 Doing this is not recommended and is known to be troublesome. However, it doesn't break any crave rules yet. 
 
+### Paid Queue
+
+To use your crave wallet with one of these projects, just set a secret called "PAID" without the quotes with any data(like "true")
+
+To know more about wallets, read this: 
+
+https://opendroid.pugzarecute.com/wiki/Crave_Devspace#paid-queue
+
+https://foss.crave.io/docs/wallets/
+
+
 ### Build Signing
 Q4. How do I sign my builds?
 
