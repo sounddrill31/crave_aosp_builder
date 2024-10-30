@@ -81,7 +81,12 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Check Credentials
-      run: bash scripts/env-checker.sh
+      run: |
+        if [[ -z "${{ secrets.CRAVE_TOKEN }}" || -z "${{ secrets.CRAVE_USERNAME }}" ]]; then
+          echo "Crave Credentials Not Configured! Exiting..."
+          exit 1
+        fi
+        bash scripts/env-checker.sh
 
     - name: Set Project variables
       id: proj-variables
