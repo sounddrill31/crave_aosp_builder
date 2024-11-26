@@ -18,6 +18,7 @@ on:
         options:
           - 'LineageOS 20.0'
           - 'LineageOS 21.0'
+          - 'LineageOS 22.0'
           - 'ArrowOS 13.1'
           - 'DerpFest 14.0'
           - 'CipherOS 14'
@@ -107,6 +108,11 @@ jobs:
           export PROJECTFOLDER="/crave-devspaces/Lineage21"
           export PROJECTID="72"
           export REPO_INIT="repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1"
+        ;;
+        "LineageOS 22.0")
+          export PROJECTFOLDER="/crave-devspaces/Lineage22"
+          export PROJECTID="93"
+          export REPO_INIT="repo init -u https://github.com/LineageOS/android.git -b lineage-22.0 --git-lfs --depth=1"
         ;;
         "LineageOS 20.0")
           export PROJECTFOLDER="/crave-devspaces/Lineage20"
