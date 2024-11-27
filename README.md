@@ -164,7 +164,7 @@ Please fill out the [form](https://forms.gle/Jhvy9osvdmcS9B7fA) if you're lookin
 ### Chat Help
 Q2. Hey, I get an error with this repository! Whom do i ask?
 
-A. Please feel free to contact me through the [crave.io discord](https://discord.crave.io) or [ROM Builders telegram](https://t.me/ROM_builders). My username is `sounddrill`
+A. Please feel free to contact me through the [crave.io discord](https://discord.crave.io) or [ROM Builders telegram](https://t.me/ROM_builders) if this repo isn't working as expected(please avoid pinging me while asking about rom building issues unrelated to this repository). My username is `sounddrill`
 
 
 ### Unsupported ROMs
