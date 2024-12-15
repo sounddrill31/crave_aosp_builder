@@ -458,7 +458,11 @@ jobs:
         $LOCAL_MANIFEST && \
 
         # Sync the repositories
-        /opt/crave/resync.sh  && \
+        if [ -f /usr/bin/resync ]; then
+          /usr/bin/resync # For compatibility with Omansh's Docker image 
+        else
+          /opt/crave/resync.sh
+        fi && \
 
         # Set up build environment
         export BUILD_USERNAME=${{ github.actor }} ; \
