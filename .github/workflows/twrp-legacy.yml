@@ -227,6 +227,13 @@ jobs:
 
         echo "DCDEVSPACE status: ${DCDEVSPACE}"
         if [[ "${DCDEVSPACE}" != "1" ]]; then
+
+          curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s -- 
+
+          mkdir -p ${HOME}/bin/
+          mv ${PWD}/crave ${HOME}/bin/ 
+          sudo ln -sf /home/${USER}/bin/crave /usr/bin/crave; sudo chmod +x /usr/bin/crave 
+
           echo "Symlinking devspace folder"
           mkdir -p devspace
           sudo mkdir -p /crave-devspaces
