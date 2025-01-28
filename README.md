@@ -14,6 +14,27 @@ Please avoid importing, or "kanging" this repository as it is frequently updated
 
 This ensured you can easily update to the latest changes and also boosts my fork stats 😉
 
+>[!WARNING]
+> I have received reports that people are getting their Actions access restricted upon using this, especially new accounts.
+> When they tried contacting github support, they got a "In particular, any repositories that use GitHub Actions solely to interact with 3rd party websites, to engage in incentivized activities, or for general computing purposes may fall afoul of the GitHub Additional Product Terms". More explanation follows.
+
+When I take a look at [Additional Product Terms for Actions](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features#actions), I do not see anything directly disbarring this activity. (as of 28th January 2025)
+1. Potential explanation 1:
+    - These users may have been using github runners instead of the selfhostable ones
+    - "If using GitHub-hosted runners, any other activity unrelated to the production, testing, deployment, or publication of the software project associated with the repository where GitHub Actions are used."
+2. Potential explanation 2:
+     - "Any activity that places a burden on our servers, where that burden is disproportionate to the benefits provided to users (for example, don't use Actions as a content delivery network or as part of a serverless application, but a low benefit Action could be ok if it’s also low burden)"
+    - This just connects to a 3rd party service to offload heavy computational tasks out there.
+    - The intention of this repo is to decrease this burden from github servers, to disincentivise people from trying to abuse CI services like this to build android or other high storage/computationally heavy projects.
+    - We have explicit consent(even encouragement) from the Crave.io team to set this up w.r.t. using their services to make usage easier.
+
+**Neither of these are the same thing as what is mentioned in the response.** 
+
+If you are a github employee and do not like what we're doing, please open an issue and I will disable this repo with a notice asap. If you would like to discuss a better option, again, just please open an issue. 
+
+>[!WARNING]
+> You have been warned about using this repo, especially non-selfhosted workflows. While I cannot find anything that we're violating among the given terms, policies, etc, I am not a lawyer.
+
 ## Wiki
 While using this repo, please take a look at [the wiki](https://opendroid.pugzarecute.com/wiki) as well!
 
