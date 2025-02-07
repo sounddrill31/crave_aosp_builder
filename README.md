@@ -35,6 +35,8 @@ If you are a github employee and do not like what we're doing, please open an is
 >[!WARNING]
 > You have been warned about using this repo, especially non-selfhosted workflows. While I cannot find anything that we're violating among the given terms, policies, etc, I am not a lawyer.
 
+>[!WARNING]
+> Feb 2025 Update: I've disabled non selfhosted runners on this repo after yet another user brought this to my attention. Use self-hosted workflow to avoid github actions bans against your account.
 ## Wiki
 While using this repo, please take a look at [the wiki](https://opendroid.pugzarecute.com/wiki) as well!
 
