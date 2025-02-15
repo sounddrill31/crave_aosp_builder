@@ -38,7 +38,7 @@ If you are a github employee and do not like what we're doing, please open an is
 >[!WARNING]
 > Feb 2025 Update: I've disabled non selfhosted runners on this repo after yet another user brought this to my attention. Use self-hosted workflow to avoid github actions bans against your account.
 ## Wiki
-While using this repo, please take a look at [the wiki](https://opendroid.pugzarecute.com/wiki) as well!
+While using this repo, please take a look at [the wiki](https://fosson.top/crave/) as well!
 
 ## Prerequisites 
 foss.crave.io account
@@ -181,7 +181,7 @@ Q1. What is this Crave.io? How do I get an account?
 
 A. Crave.io is a build accelerator capable of cutting down build time by quite a bit. They are providing free build servers, however: self signup is disabled. 
 
-Please fill out the [form](https://forms.gle/Jhvy9osvdmcS9B7fA) if you're looking for an account. for more info, check the [wiki](https://opendroid.pugzarecute.com/wiki/Crave_Devspace#getting-a-fosscraveiohttpsfosscraveio-account)
+Please fill out the [form](https://forms.gle/Jhvy9osvdmcS9B7fA) if you're looking for an account. for more info, check the [wiki](https://fosson.top/crave/getting-started/introduction#getting-an-account)
 
 
 ### Chat Help
@@ -205,7 +205,7 @@ To use your crave wallet with one of these projects, just set a secret called "P
 
 To know more about wallets, read this: 
 
-https://opendroid.pugzarecute.com/wiki/Crave_Devspace#paid-queue
+https://fosson.top/crave/getting-started/more-info.html#paid-queue
 
 https://foss.crave.io/docs/wallets/
 
@@ -215,7 +215,10 @@ Q4. How do I sign my builds?
 
 A. Build signing can be done using Backblaze B2 Buckets to hold the private keys. 
 
-Follow [this](https://opendroid.pugzarecute.com/wiki/Crave_Signing) guide to generate, encrypt and upload your keys to Backblaze.
+> [!WARNING]
+> This method is deprecated for now with no better alternative other than using crave push. If you figure something out and want to contribute, please contact me or make a PR.
+
+Follow [this](https://fosson.top/crave/getting-started/build-signing.html#signing-builds-on-crave) guide to generate, encrypt and upload your keys to Backblaze.
 
 Create a actions secret called CUSTOM_YAML with the correct credentials as your environment variables. If this secret is set, the workflow will use this for crave.yaml, instead of the templates found in config/crave folder of this repository. 
 
@@ -233,7 +236,7 @@ Replace "LOS 21" with your base project's name. Remember to use the correct name
 
 Also remember to replace the placeholder credentials with actual values.
 
-It is also recommended to set ignoreClientHostname to preserve workflow persistence. Read more about it [here](https://opendroid.pugzarecute.com/wiki/Crave_Devspace#workspace-persistence).
+It is also recommended to set ignoreClientHostname to preserve workflow persistence. Read more about it [here](https://fosson.top/crave/getting-started/more-info.html#workspace-persistence).
 
 Steps:
 - Go to (repo) Settings -> Security -> Secrets and Variables -> Actions
