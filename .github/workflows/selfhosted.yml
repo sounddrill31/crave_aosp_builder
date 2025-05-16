@@ -377,7 +377,7 @@ jobs:
 
     - name: Check for a broken .bashrc
       run: |
-        output=$( { source ~/.bashrc; } 2>&1 )
+        output=$( { set +e; source ~/.bashrc; } 2>&1 )
         status=$?
         echo "$output"
         if [[ $status -ne 0 ]]; then
