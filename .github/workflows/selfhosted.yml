@@ -377,14 +377,18 @@ jobs:
 
     - name: Check for a broken .bashrc
       run: |
-        output=$( { set +e; source ~/.bashrc; } 2>&1 )
-        status=$?
-        echo "$output"
-        if [[ $status -ne 0 ]]; then
-          echo "You have a broken .bashrc, please contact a Crave.io Administrator"
-          exit 1
-        fi
-        echo "$output" | grep -q "cannot execute" && (echo "You have a broken .bashrc, please contact a Crave.io Administrator"; exit 1)
+        set -x
+        (
+          set +e
+          output=$( { source ~/.bashrc; } 2>&1 )
+          status=$?
+          echo "$output"
+          if [[ $status -ne 0 ]]; then
+            echo "You have a broken .bashrc, please contact a Crave.io Administrator"
+            exit 1
+          fi
+          echo "$output" | grep -q "cannot execute" && (echo "You have a broken .bashrc, please contact a Crave.io Administrator"; exit 1)
+        )
 
         # Create a project folder
     - name: Create Project Folders
