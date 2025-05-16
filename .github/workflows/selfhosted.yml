@@ -377,7 +377,6 @@ jobs:
 
     - name: Check for a broken .bashrc
       run: |
-        set -e
         output=$( { source ~/.bashrc; } 2>&1 ) || {
           echo "$output"
           echo "You have a broken .bashrc, please contact a Crave.io Administrator"
