@@ -310,7 +310,7 @@ jobs:
     - name: Create Project Folders
       run: |
         echo "DCDEVSPACE status: ${DCDEVSPACE}"
-        if [[ "${DCDEVSPACE}" != "1" ]]; then
+        if [[ $DCDEVSPACE != *1* ]]; then
           
           curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s -- 
 
