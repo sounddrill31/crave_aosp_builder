@@ -248,7 +248,7 @@ jobs:
         echo "Skipping removal"
         fi
 
-        if [[ "${DCDEVSPACE}" == "1" ]]; then
+        if [[ $DCDEVSPACE == *1* ]]; then
           crave clone create --projectID $PROJECTID $PROJECTFOLDER || echo "Crave clone create failed!"
         else
           mkdir $PROJECTFOLDER
@@ -316,7 +316,7 @@ jobs:
       run: |
         echo "DCDEVSPACE status: ${DCDEVSPACE}"
         mkdir -p $PROJECTFOLDER/.repo/manifests
-        if [[ "${DCDEVSPACE}" == "1" ]]; then
+        if [[ $DCDEVSPACE == *1* ]]; then
           echo 'No need to set up crave, we are already running in devspace!'
         else
           curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash -s --

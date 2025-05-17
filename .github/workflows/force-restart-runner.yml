@@ -26,7 +26,7 @@ jobs:
       # Download and configure 'crave'.
     - name: Configure the 'crave' environment
       run: |
-        if [[ "${DCDEVSPACE}" == "1" ]]; then
+        if [[ $DCDEVSPACE == *1* ]]; then
         echo 'No need to set up crave, we are already running in devspace!'
         else
           mkdir ${HOME}/bin/
