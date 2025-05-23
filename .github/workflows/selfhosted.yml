@@ -426,7 +426,7 @@ jobs:
         if [[ $DCDEVSPACE == *1* ]]; then
           crave clone create --projectID $PROJECTID $PROJECTFOLDER || echo "Crave clone create failed!"
         else
-          mkdir $PROJECTFOLDER
+          mkdir -p $PROJECTFOLDER
         fi
         
       # Check-out in order to access the repository's files.
