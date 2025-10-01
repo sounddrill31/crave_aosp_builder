@@ -1,25 +1,47 @@
 #This is a template, modify as you like
 CipherOS:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 Arrow OS:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 DerpFest-aosp:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 LOS 20:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 LOS 18.1:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 LOS 21:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 LOS 22:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 PixelOS:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 Rising OS:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 LOS 16:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 LOS CM 14.1:
   ignoreClientHostname: true
+  env:
+    GH_TOKEN: "$GH_TOKEN"
 
 #ignoreClientHostname is used to keep persistence by ignoring the client hostname
