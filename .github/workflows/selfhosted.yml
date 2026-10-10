@@ -533,27 +533,6 @@ jobs:
         ${{ github.event.inputs.BUILD_COMMAND }}"
       timeout-minutes: 1440
 
-      # Send Build 'status' notification (Success)
-    - name: Telegram Notification
-      if:  ${{ success() }}
-      continue-on-error: true
-      run: |
-        send_telegram_message() {
-          local message="$1"
-          curl -s -X POST \
-          https://api.telegram.org/bot$botToken/sendMessage \
-          -d chat_id=$chatId \
-          -d text="$message" \
-          -d parse_mode="Markdown"
-        }
-
-        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has Succeeded! %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}%0ADownload at: https://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/releases/tag/${{ github.run_id }}"
-
-      env:
-        chatId: ${{ secrets.TELEGRAM_TO }}
-        botToken: ${{ secrets.TELEGRAM_TOKEN }}
-        jobStatus: ${{ job.status }}
-        skipSuccess: false
 
       # Send Build 'status' notification (Fail/Cancel)
     - name: Telegram Notification
@@ -598,6 +577,28 @@ jobs:
         echo "${{ github.token }}" > token.txt
         crave push token.txt -d $(crave ssh -- pwd | grep -v Select | sed -s 's/\r//g')/
         crave ssh -- 'export GH_UPLOAD_LIMIT="${{ secrets.GH_UPLOAD_LIMIT }}"; bash /opt/crave/github-actions/upload.sh "${{ github.run_id }}" "${{ github.event.inputs.DEVICE_NAME }}" "${{ github.repository }}" "${{ github.event.inputs.PRODUCT_NAME }}-${{ github.run_id }}" "${{ secrets.EXTRA_FILES }}"'
+
+      # Send Build 'status' notification (Success)
+    - name: Telegram Notification
+      if:  ${{ success() }}
+      continue-on-error: true
+      run: |
+        send_telegram_message() {
+          local message="$1"
+          curl -s -X POST \
+          https://api.telegram.org/bot$botToken/sendMessage \
+          -d chat_id=$chatId \
+          -d text="$message" \
+          -d parse_mode="Markdown"
+        }
+
+        send_telegram_message "Crave Project: ${{ github.event.inputs.BASE_PROJECT }}%0ACrave ProjectID: $PROJECTID %0ABuild for ${{ github.event.inputs.DEVICE_NAME }} has Succeeded! %0ACheck Progress at: %0Ahttps://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/actions/runs/${{ github.run_id }}%0ADownload at: https://github.com/$(echo "${{ github.repository }}" | sed 's@_@\\_@g')/releases/tag/${{ github.run_id }}"
+
+      env:
+        chatId: ${{ secrets.TELEGRAM_TO }}
+        botToken: ${{ secrets.TELEGRAM_TOKEN }}
+        jobStatus: ${{ job.status }}
+        skipSuccess: false
 
       # Pull Errors and Display them
     - name: Display error.log
